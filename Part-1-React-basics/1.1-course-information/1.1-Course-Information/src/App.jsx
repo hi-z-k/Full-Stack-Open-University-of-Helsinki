@@ -13,28 +13,38 @@ const Part = ({title, count}) => {
 const Content = ({ data }) => {
   return (
     <div className="exercise-list">
-      {Object.entries(data).map(([title, count]) =>
-        <Part title={title} count={count}/>
+      {data.map((part) =>
+        <Part key={part.name}title={part.name} count={part.exercises}/>
       )}
     </div>)
 }
 const Total = ({ data }) => {
-  const count = Object.values(data).reduce((total, count) => total + count, 0)
+  const count = data.reduce((total, part) => total + part.exercises, 0)
   return <p>Number of exercises {count}</p>
 }
 
 const App = () => {
-  const courseName = 'Half Stack application development'
-  const data = {
-    "part1": 10,
-    "part2": 7,
-    "part3": 14,
-  }
+  const course = 'Half Stack application development'
+  const parts = [
+    {
+      name: 'Fundamentals of React',
+      exercises: 10
+    },
+    {
+      name: 'Using props to pass data',
+      exercises: 7
+    },
+    {
+      name: 'State of a component',
+      exercises: 14
+    }
+  ]
+
   return (
     <div>
-      <Header course={courseName} />
-      <Content data={data} />
-      <Total data={data} />
+      <Header course={course} />
+      <Content data={parts} />
+      <Total data={parts} />
     </div>
   )
 }
