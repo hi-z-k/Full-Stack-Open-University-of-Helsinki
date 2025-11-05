@@ -7,4 +7,7 @@ Assignment Submissions for Full Stack Open course
 - **[0.5: Single Page App](./Part-0-Fundamentals-of-Web-apps/0.5-Single-Page-App/0.5-solution.md)**  
 - **[0.6: SPA New Note](./Part-0-Fundamentals-of-Web-apps/0.6-SPA-New-note/0.6-solution.md)**  
 
-
+### [Part 1 - React basics](./Part-1-React-basics)
+- **[1.1: Course Information](./Part-1-React-basics/1.1-Course-Information/src/App.jsx)**  
+- **[1.6: unicafe](./Part-1-React-basics/1.6-unicafe/src/App.jsx)**  
+- **[1.12: anecdotes](./Part-1-React-basics/1.12-anecdotes/src/App.jsx)**  
