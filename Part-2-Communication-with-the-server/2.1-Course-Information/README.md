@@ -1,0 +1,1 @@
+# Full stack Open Assignment 1.1: course information
