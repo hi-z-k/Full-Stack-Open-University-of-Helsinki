@@ -14,7 +14,7 @@ const Content = ({ data }) => {
   return (
     <div className="exercise-list">
       {data.map((part) =>
-        <Part key={part.name}title={part.name} count={part.exercises}/>
+        <Part key={part.id}title={part.name} count={part.exercises}/>
       )}
     </div>)
 }
@@ -23,7 +23,7 @@ const Total = ({ data }) => {
   return <p>Number of exercises {count}</p>
 }
 const Course = ({course})=>{
-  return <div>
+  return <div key={course.id}>
       <Header course={course.name} />
       <Content data={course.parts} />
       <Total data={course.parts}/>
@@ -33,25 +33,29 @@ const Course = ({course})=>{
 const App = () => {
   const course = {
     name: 'Half Stack application development',
+    id: 1,
     parts: [
       {
         name: 'Fundamentals of React',
-        exercises: 10
+        exercises: 10,
+        id: 1
       },
       {
         name: 'Using props to pass data',
-        exercises: 7
+        exercises: 7,
+        id: 2
       },
       {
         name: 'State of a component',
-        exercises: 14
+        exercises: 14,
+        id: 3
       }
     ]
   }
 
   return (
     <div>
-      <Course course={course}/>
+      <Course course={course} />
     </div>
   )
 }
