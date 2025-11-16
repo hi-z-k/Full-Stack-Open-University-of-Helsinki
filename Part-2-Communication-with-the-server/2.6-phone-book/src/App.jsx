@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios"
+import Server from "./Services/server";
 const Persons = ({ data }) => {
   return (
     <div>
@@ -39,16 +39,9 @@ const App = () => {
   const [phoneNumber, setPhoneNumber] = useState("+251");
   const [query, setQuery] = useState("");
 
-  const getData = async ()=>{
-    try {
-      const res = await axios.get("http://localhost:3001/persons")
-      return res.data
-    } catch (error) {
-      return []
-    }
-  }
   const hook = ()=>{
-    getData().then(data=>setPersons(data))
+    Server.loadDataFromServer()
+    .then(data=>setPersons(data))
   }
   useEffect(hook,[])
 
@@ -72,13 +65,13 @@ const App = () => {
         name: newName,
         phone: phoneNumber,
       }
-    axios.post("http://localhost:3001/persons",newUser)
-    .then(response=>{
-      setPersons(persons.concat(response.data))
+    Server.addDataToServer(newUser)
+    .then(data=>{
+      setPersons(persons.concat(data))
       setNewName("");
       setPhoneNumber("+251");
     })
-    .catch(error=>alert(`Couldn't add ${newName}`))
+    .catch(error=>alert(`Couldn't add ${newName}, Try again`))
     
   };
   
