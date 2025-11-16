@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import Server from "./Services/server";
-const Persons = ({ data }) => {
+const Persons = ({ data,onDelete}) => {
   return (
     <div>
       {data.map((user) => (
-        <p key={user.name}>
+        <p key={user.id}>
           {user.name}: {user.phone}
+          {"\t"}
+          <button type="button" onClick={()=>onDelete(user.id)}>Delete</button>
         </p>
       ))}
     </div>
@@ -90,7 +92,16 @@ const App = () => {
   if (query !== "") {
     searchResult = queryResult(persons);
   }
-  
+  const deletePhone = (id)=>{
+    const person = persons.find(person=>person.id===id)
+    if (!person) return
+    const isConfirmed = confirm(`Do you want to delete ${person.name} from the phonebook?`)
+    if (isConfirmed){
+      Server.DeleteFromServer(id)
+      .then(id=>setPersons(persons.filter(person=>person.id !== id)))
+      .catch(e=>alert(`Couldn't delete ${person.name} from the phonebook`))
+    }
+    }
   const formAction = {
     name: [newName, handleNewName],
     phone: [phoneNumber, handlePhoneNumber],
@@ -104,7 +115,7 @@ const App = () => {
       <h2>Add a new</h2>
       <PersonForm action={formAction} />
       <h2>Numbers</h2>
-      <Persons data={searchResult} />
+      <Persons data={searchResult} onDelete={deletePhone}/>
     </div>
   );
 };
