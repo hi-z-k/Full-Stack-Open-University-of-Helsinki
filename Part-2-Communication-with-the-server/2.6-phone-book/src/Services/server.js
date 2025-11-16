@@ -2,19 +2,24 @@ import axios from "axios"
 
 const URL = "http://localhost:3001/persons"
 
+const getLink = id => `${URL}/${id}`
 
-const loadDataFromServer = () => {
+const loadData = () => {
     return axios.get(URL)
     .then(response => response.data)
     .catch(error=>[])
 } 
-const addDataToServer = (data) => {
+const addData = (data) => {
     return axios.post(URL,data)
     .then(response=>response.data)
 }
-const DeleteFromServer = (id)=>{
-    return axios.delete(`${URL}/${id}`)
+const deleteData = (id)=>{
+    return axios.delete(getLink(id))
     .then(response => response.data.id)
 }
+const replaceData = (id,data)=>{
+    return axios.put(getLink(id),data)
+    .then(response => response.data)
+}
 
-export default {loadDataFromServer, addDataToServer, DeleteFromServer}
+export default {loadData, addData, deleteData, replaceData}
