@@ -68,14 +68,18 @@ const App = () => {
       alert(`${newName} is already added to phonebook`);
       return;
     }
-    setPersons(
-      persons.concat({
+    const newUser = {
         name: newName,
         phone: phoneNumber,
-      })
-    );
-    setNewName("");
-    setPhoneNumber("+251");
+      }
+    axios.post("http://localhost:3001/persons",newUser)
+    .then(response=>{
+      setPersons(persons.concat(response.data))
+      setNewName("");
+      setPhoneNumber("+251");
+    })
+    .catch(error=>alert(`Couldn't add ${newName}`))
+    
   };
   
   const handleQuery = (e) => {
