@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import Server from "./Services/server";
+
+import Notification from "./Components/Notification";
+
 const Persons = ({ data, onDelete }) => {
   return (
     <div>
@@ -46,11 +49,25 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("+251");
   const [query, setQuery] = useState("");
+  const [notificationData, setNotificationData] = useState({
+    message: null,
+    type: "success",
+  });
 
-  const cleanUp = ()=>{
+  const cleanUp = () => {
     setNewName("");
-            setPhoneNumber("+251");
+    setPhoneNumber("+251");
+  };
+  const sendMsg = (msg,type)=>{
+    const newNotification = { message: msg, type:type}
+    setNotificationData(newNotification);
+    setTimeout(() => {
+          setNotificationData({...newNotification, message: null})
+        }, 5000)
   }
+  const successMSG = (msg) => sendMsg(msg,"success") 
+  const errorMSG = (msg) => sendMsg(msg,"error") 
+
   const hook = () => {
     Server.loadData().then((data) => setPersons(data));
   };
@@ -79,6 +96,7 @@ const App = () => {
             persons.map((person) => (person.id !== id ? person : data))
           )
           .then((persons) => setPersons(persons))
+          .then(()=>successMSG(`Updated ${newName}'s phone number`))
           .finally(cleanUp);
         return;
       }
@@ -92,7 +110,8 @@ const App = () => {
         setPersons(persons.concat(data));
       })
       .then(cleanUp)
-      .catch((error) => alert(`Couldn't add ${newName}, Try again`));
+      .then(()=>successMSG(`Added ${newName} to the phone book`))
+      .catch((error) => errorMSG(`Couldn't add ${newName}, Try again`));
   };
 
   const handleQuery = (e) => {
@@ -119,8 +138,9 @@ const App = () => {
     if (isConfirmed) {
       Server.deleteData(id)
         .then((id) => setPersons(persons.filter((person) => person.id !== id)))
+        .then(()=>successMSG(`Deleted ${person.name} from the phone book`))
         .catch((e) =>
-          alert(`Couldn't delete ${person.name} from the phonebook`)
+          errorMSG(`Couldn't delete ${person.name} from the phonebook`)
         );
     }
   };
@@ -133,6 +153,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification data={notificationData} />
       <Filter action={formAction} />
       <h2>Add a new</h2>
       <PersonForm action={formAction} />
