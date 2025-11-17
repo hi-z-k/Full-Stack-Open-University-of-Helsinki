@@ -58,15 +58,15 @@ const App = () => {
     setNewName("");
     setPhoneNumber("+251");
   };
-  const sendMsg = (msg,type)=>{
-    const newNotification = { message: msg, type:type}
+  const sendMsg = (msg, type) => {
+    const newNotification = { message: msg, type: type }
     setNotificationData(newNotification);
     setTimeout(() => {
-          setNotificationData({...newNotification, message: null})
-        }, 5000)
+      setNotificationData({ ...newNotification, message: null })
+    }, 5000)
   }
-  const successMSG = (msg) => sendMsg(msg,"success") 
-  const errorMSG = (msg) => sendMsg(msg,"error") 
+  const successMSG = (msg) => sendMsg(msg, "success")
+  const errorMSG = (msg) => sendMsg(msg, "error")
 
   const hook = () => {
     Server.loadData().then((data) => setPersons(data));
@@ -84,7 +84,20 @@ const App = () => {
     const person = persons.find(
       (user) => user.name.toLowerCase() === newName.toLowerCase()
     );
-    if (person) {
+    if (!person) {
+      const newUser = {
+        name: newName,
+        phone: phoneNumber,
+      };
+      Server.addData(newUser)
+        .then((data) => {
+          setPersons(persons.concat(data));
+        })
+        .then(cleanUp)
+        .then(() => successMSG(`Added ${newName} to the phone book`))
+        .catch((error) => errorMSG(`Couldn't add ${newName}, Try again`));
+    }
+    else {
       const isConfirmed = confirm(
         `${newName} is already added to phonebook, Do you want to replace the old phone number with a new one?`
       );
@@ -95,25 +108,22 @@ const App = () => {
           .then((data) =>
             persons.map((person) => (person.id !== id ? person : data))
           )
-          .then((persons) => setPersons(persons))
-          .then(()=>successMSG(`Updated ${newName}'s phone number`))
+          .then((persons) =>{ 
+            setPersons(persons)
+            successMSG(`Updated ${newName}'s phone number`)
+          })
+          .catch((error)=>{
+            errorMSG(`Information for ${newName} has already been removed from server`)
+            return Server.loadData()
+            .then((persons)=>setPersons(persons))
+          })
           .finally(cleanUp);
-        return;
+      }
+      else{
+        errorMSG("Update operation canceled")
       }
     }
-    const newUser = {
-      name: newName,
-      phone: phoneNumber,
-    };
-    Server.addData(newUser)
-      .then((data) => {
-        setPersons(persons.concat(data));
-      })
-      .then(cleanUp)
-      .then(()=>successMSG(`Added ${newName} to the phone book`))
-      .catch((error) => errorMSG(`Couldn't add ${newName}, Try again`));
   };
-
   const handleQuery = (e) => {
     setQuery(e.target.value);
   };
@@ -138,7 +148,7 @@ const App = () => {
     if (isConfirmed) {
       Server.deleteData(id)
         .then((id) => setPersons(persons.filter((person) => person.id !== id)))
-        .then(()=>successMSG(`Deleted ${person.name} from the phone book`))
+        .then(() => successMSG(`Deleted ${person.name} from the phone book`))
         .catch((e) =>
           errorMSG(`Couldn't delete ${person.name} from the phonebook`)
         );
