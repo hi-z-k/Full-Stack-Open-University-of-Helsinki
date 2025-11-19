@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import CountriesAPI from "./services/CountriesAPI";
 import Country from "./Components/Country";
+import CountryList from "./Components/CountryList";
 
 
 const Search = ({ query, onQuery }) => {
@@ -13,12 +14,12 @@ const Search = ({ query, onQuery }) => {
 
 const searchCountries = (query, countries) => {
   if (countries && query) {
-    return countries.filter(country => country.startsWith(query))
+    return countries.filter(country => country.toLowerCase().startsWith(query.toLowerCase()))
   }
   return []
 }
 
-const Display = ({ query, countries }) => {
+const Display = ({ query, countries, onShow }) => {
   const queryResult = searchCountries(query, countries)
   const length = queryResult.length
   if (!length) {
@@ -28,9 +29,7 @@ const Display = ({ query, countries }) => {
     return <p>Too many matches, specify another filter</p>
   }
   else if (length > 1) {
-    return <div className="countries">
-      {queryResult.map(country => <p key={country}>{country}</p>)}
-    </div>
+    return <CountryList data={queryResult} onShow={onShow}/>
   }
   else {
     return <Country name={queryResult[0]} />
@@ -46,7 +45,7 @@ const App = () => {
 
 
   const handleQuery = (e) => {
-    const query = e.target.value.toLowerCase()
+    const query = e.target.value
     setQuery(query);
   };
 
@@ -54,7 +53,7 @@ const App = () => {
   return (
     <>
       <Search query={query} onQuery={handleQuery} />
-      <Display query={query} countries={countries} />
+      <Display query={query} countries={countries} onShow={(c)=>setQuery(c)} />
     </>
   );
 };

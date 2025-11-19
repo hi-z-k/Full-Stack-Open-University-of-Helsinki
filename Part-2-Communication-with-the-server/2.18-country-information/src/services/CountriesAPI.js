@@ -9,7 +9,7 @@ const loadCountries = () => {
   return axios
     .get(link)
     .then((response) => response.data)
-    .then((data) => data.map((country) => country.name.common.toLowerCase()))
+    .then((data) => data.map((country) => country.name.common))
 };
 
 const getCountry = (country) => {
