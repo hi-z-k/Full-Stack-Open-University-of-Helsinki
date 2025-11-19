@@ -11,3 +11,8 @@ Assignment Submissions for Full Stack Open course
 - **[1.1: Course Information](./Part-1-React-basics/1.1-Course-Information/src/App.jsx)**  
 - **[1.6: unicafe](./Part-1-React-basics/1.6-unicafe/src/App.jsx)**  
 - **[1.12: anecdotes](./Part-1-React-basics/1.12-anecdotes/src/App.jsx)**  
+
+### [Part-2 Communication with the server](./Part-2-Communication-with-the-server/)
+- **[2.1 Course Information](./Part-2-Communication-with-the-server/2.1-Course-Information/src/App.jsx)**  
+- **[2.6 Phone Book](./Part-2-Communication-with-the-server/2.6-phone-book/src/App.jsx)**  
+- **[2.18 Country Information](./Part-2-Communication-with-the-server/2.18-country-information/src/App.jsx)**  
