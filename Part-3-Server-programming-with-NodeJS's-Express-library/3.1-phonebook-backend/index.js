@@ -2,7 +2,7 @@ import express, { request, response } from "express";
 
 const app = express();
 const PORT = 3001;
-const persons = [
+let persons = [
   {
     "name": "Arto Hellas",
     "phone": "040-123456",
@@ -41,6 +41,17 @@ app.get('/api/persons/:id', (request, response) => {
   const data = persons.find(n => n.id === id)
   if (data) response.json(data)
   else response.status(404).send("Person not found in the phonebook")
+})
+
+app.delete('/api/persons/:id',(request, response) => {
+  const id = request.params.id
+  let prevLength = persons.length 
+  persons = persons.filter(n => n.id !== id)
+  console.log(persons)
+  if(prevLength === persons.length){
+    return response.status(404).send("ID not found")
+  }
+  response.status(204).end()
 })
 
 app.listen(PORT, () => {
