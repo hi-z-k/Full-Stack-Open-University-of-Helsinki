@@ -1,4 +1,4 @@
-import express from "express";
+import express, { response } from "express";
 
 const app = express();
 const PORT = 3001;
@@ -27,6 +27,14 @@ const persons =[
 app.get('/api/persons',(request,response)=>{
     response.json(persons)
 })
+app.get('/info',(request,response)=>{
+    let message = `
+    <p>Phonebook has info for ${persons.length} people</p>
+    <p>${new Date()}</p>
+    `
+    response.type('html').send(message)
+})
+
 
 app.listen(PORT,()=>{
     console.log(`Notes API is live at Port ${PORT}`)
