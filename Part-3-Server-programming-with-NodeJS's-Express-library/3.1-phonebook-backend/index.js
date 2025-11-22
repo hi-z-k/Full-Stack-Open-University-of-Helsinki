@@ -48,7 +48,7 @@ app.delete('/api/persons/:id', (request, response) => {
   let prevLength = persons.length
   persons = persons.filter(n => n.id !== id)
   if (prevLength === persons.length) {
-    return response.status(404).send("ID not found")
+    return response.status(404).json({ error: 'ID not found' })
   }
   response.status(204).end()
 })
@@ -73,6 +73,11 @@ const generateId = () => {
 app.use(express.json())
 app.post('/api/persons', (request, response) => {
   const data = request.body
+  const names = persons.find(n=>n.name===data.name)
+  if (names){
+    response.status(409).json({ error: 'name must be unique' })
+    return
+  }
   if (data.name && data.phone) {
     let res = {
       name: data.name,
@@ -83,7 +88,7 @@ app.post('/api/persons', (request, response) => {
     response.status(201).json(res)
   }
   else {
-    response.status(400).send("Missing critical data")
+    response.status(400).json({ error: 'Missing critical data' })
   }
 })
 
