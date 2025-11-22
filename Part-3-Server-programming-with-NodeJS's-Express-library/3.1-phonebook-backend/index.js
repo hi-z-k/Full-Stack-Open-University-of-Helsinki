@@ -1,7 +1,22 @@
 import express, { request, response } from "express";
+import morgan from "morgan";
 
 const app = express();
 const PORT = 3001;
+
+
+const tiny = `:method :url :status :res[content-length] - :response-time ms `
+app.use(express.json())
+
+morgan.token('content',(req,res)=>{
+  if (req.body){
+    return `${JSON.stringify(req.body)}`
+  }
+  return ``
+})
+app.use(morgan(`${tiny} :content`))
+
+
 let persons = [
   {
     "name": "Arto Hellas",
@@ -70,7 +85,6 @@ const generateId = () => {
 }
 
 
-app.use(express.json())
 app.post('/api/persons', (request, response) => {
   const data = request.body
   const names = persons.find(n=>n.name===data.name)
