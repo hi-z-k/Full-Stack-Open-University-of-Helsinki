@@ -43,15 +43,48 @@ app.get('/api/persons/:id', (request, response) => {
   else response.status(404).send("Person not found in the phonebook")
 })
 
-app.delete('/api/persons/:id',(request, response) => {
+app.delete('/api/persons/:id', (request, response) => {
   const id = request.params.id
-  let prevLength = persons.length 
+  let prevLength = persons.length
   persons = persons.filter(n => n.id !== id)
-  console.log(persons)
-  if(prevLength === persons.length){
+  if (prevLength === persons.length) {
     return response.status(404).send("ID not found")
   }
   response.status(204).end()
+})
+
+
+const generateId = () => {
+  const rand = (max) => {
+    return Math.floor(Math.random() * max)
+  }
+  const idList = persons.map(n => +n.id)
+  const maxDouble = 2 * Math.max(...idList) 
+  let id = rand(maxDouble)
+  let idExists = idList.find(idNum => idNum === id)
+  while (idExists) {
+    id = rand(maxDouble)
+    idExists = idList.find(idNum => idNum === id)
+  }
+  return `${id}`
+}
+
+
+app.use(express.json())
+app.post('/api/persons', (request, response) => {
+  const data = request.body
+  if (data.name && data.phone) {
+    let res = {
+      name: data.name,
+      phone: data.phone,
+      id: generateId()
+    }
+    persons.push(res)
+    response.status(201).json(res)
+  }
+  else {
+    response.status(400).send("Missing critical data")
+  }
 })
 
 app.listen(PORT, () => {
