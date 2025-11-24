@@ -1,21 +1,23 @@
 import express, { request, response } from "express";
 import morgan from "morgan";
-
+import cors from "cors"
 const app = express();
 const PORT = process.env.PORT || 3001
 
 
 const tiny = `:method :url :status :res[content-length] - :response-time ms `
-app.use(express.json())
-
 morgan.token('content',(req,res)=>{
   if (req.body){
     return `${JSON.stringify(req.body)}`
   }
   return ``
 })
-app.use(morgan(`${tiny} :content`))
 
+
+app.use(express.static('dist'))
+app.use(express.json())
+app.use(cors())
+app.use(morgan(`${tiny} :content`))
 
 let persons = [
   {
@@ -107,5 +109,5 @@ app.post('/api/persons', (request, response) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`Notes API is live at Port ${PORT}`)
+  console.log(`Phonebook API is live at Port ${PORT}`)
 })
