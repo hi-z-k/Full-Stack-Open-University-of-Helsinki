@@ -1,0 +1,15 @@
+{
+  "name": "database-cli",
+  "version": "1.0.0",
+  "description": "a mongodb integration from the commandline",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hizkeal Y.",
+  "license": "MIT",
+  "dependencies": {
+    "mongoose": "^9.0.0"
+  }
+}
