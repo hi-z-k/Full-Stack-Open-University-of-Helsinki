@@ -9,11 +9,14 @@
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf dist && cd ../frontend && npm run build && cp -r dist ../backend",
- "deploy:full": "npm run build:ui && git add . && git commit -m \"feat(part-3):phonebook FSO Task 3.9 & 3.10 DONE\" && git push"  },
+    "deploy:full": "npm run build:ui && git add . && git commit -m \"feat(part-3):phonebook FSO Task 3.13 & 3.14 DONE\" && git push"
+  },
   "author": "Hizkeal Y.",
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "mongoose": "^9.0.0",
     "morgan": "^1.10.1"
   }
 }
