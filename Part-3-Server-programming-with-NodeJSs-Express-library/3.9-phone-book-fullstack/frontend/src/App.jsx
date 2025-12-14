@@ -106,10 +106,9 @@ const App = () => {
         const newPerson = { ...person, phone: phoneNumber };
         Server.replaceData(id, newPerson)
           .then((data) =>
-            persons.map((person) => (person.id !== id ? person : data))
+            setPersons(prev=>prev.map((person) => (person.id !== id ? person : data)))
           )
-          .then((persons) =>{ 
-            setPersons(persons)
+          .then(() =>{ 
             successMSG(`Updated ${newName}'s phone number`)
           })
           .catch((error)=>{
@@ -147,7 +146,7 @@ const App = () => {
     );
     if (isConfirmed) {
       Server.deleteData(id)
-        .then((id) => setPersons(persons.filter((person) => person.id !== id)))
+        .then((id) => setPersons(prev => prev.filter((person) => person.id !== id)))
         .then(() => successMSG(`Deleted ${person.name} from the phone book`))
         .catch((e) =>
           errorMSG(`Couldn't delete ${person.name} from the phonebook`)
