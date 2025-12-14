@@ -15,7 +15,7 @@ const addData = (data) => {
 }
 const deleteData = (id)=>{
     return axios.delete(getLink(id))
-    .then(response => response.data.id)
+    .then(res => id)
 }
 const replaceData = (id,data)=>{
     return axios.put(getLink(id),data)
