@@ -9,7 +9,7 @@
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf dist && cd ../frontend && npm run build && cp -r dist ../backend",
-    "deploy:full": "npm run build:ui && git add . && git commit -m \"feat(part-3):phonebook FSO Task 3.21 DONE(Deploy)\" && git push"
+    "deploy:full": "npm run build:ui && git add . && git commit -m \"fix(part-3-phonebook):error-msg display\" && git push"
   },
   "author": "Hizkeal Y.",
   "license": "MIT",
