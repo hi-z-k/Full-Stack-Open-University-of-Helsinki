@@ -95,7 +95,9 @@ const App = () => {
         })
         .then(cleanUp)
         .then(() => successMSG(`Added ${newName} to the phone book`))
-        .catch((error) => errorMSG(`Couldn't add ${newName}, Try again`));
+        .catch((e) =>
+          errorMSG(e.message)
+        );
     }
     else {
       const isConfirmed = confirm(
@@ -111,7 +113,7 @@ const App = () => {
           .then(() =>{ 
             successMSG(`Updated ${newName}'s phone number`)
           })
-          .catch((error)=>{
+          .catch(()=>{
             errorMSG(`Information for ${newName} has already been removed from server`)
             return Server.loadData()
             .then((persons)=>setPersons(persons))
@@ -149,7 +151,7 @@ const App = () => {
         .then((id) => setPersons(prev => prev.filter((person) => person.id !== id)))
         .then(() => successMSG(`Deleted ${person.name} from the phone book`))
         .catch((e) =>
-          errorMSG(`Couldn't delete ${person.name} from the phonebook`)
+          errorMSG(e.message)
         );
     }
   };

@@ -71,9 +71,10 @@ app.delete("/api/persons/:id", (request, response,next) => {
 });
 
 
-app.put("/api/persons", (request, response,next) => {
-  const {name,phone} = request.body;
-  updatePerson(name,phone).then(({ scode, data }) => {
+app.put("/api/persons/:id", (request, response,next) => {
+  const newData = request.body;
+  const id = request.params.id;
+  updatePerson(id,newData).then(({ scode, data }) => {
     response.status(scode).json(data);
   })
   .catch(error => next(error));
@@ -87,7 +88,14 @@ app.use((request,response,next)=>{
 })
 
 const errorHandler = (error,request,response,next) =>{
-  response.status(error.scode || 500).json({ error: error.data })
+  const message = error.data || error.message || "something went wrong"
+  if (error.name === 'ValidationError'){
+    return response.status(400).json({ message })
+  }
+  else if (error.scode){
+    return response.status(error.scode).json({ message })
+  }
+  return response.status(500).json({ message})
 }
 
 app.use(errorHandler)

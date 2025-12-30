@@ -34,7 +34,7 @@ const addPerson = (name, phone) => {
     return Promise.reject({ scode: 400, data: "Data incomplete" });
   }
   return startConnection()
-    .then(() => exists(name))
+    .then(() => nameExists(name))
     .then((exist) => {
       if (exist) {
         return Promise.reject({
@@ -48,13 +48,38 @@ const addPerson = (name, phone) => {
       });
       return person.save().then((data) => ({ scode: 201, data }));
     })
+
     .catch((e) => {
+
+      if (e.name === 'ValidationError') {
+        return Promise.reject({
+          scode: 400,
+          data: e.message,
+        });
+      }
+
       return Promise.reject({
-        scode: 500,
-        data: `unable to register ${name} to the phonebook`,
+        scode: e.scode || 500,
+        data: e.data || e.message || `unable to register ${name} to the phonebook`,
       });
     });
 };
+
+const nameExists = (name) => {
+  return startConnection()
+    .then(() =>
+      Person.findOne({
+        name,
+      })
+    )
+    .catch((error) => {
+      if (error.scode) {
+        return Promise.reject(error);
+      }
+      return Promise.reject({ scode: 500, data: `finding person ${name} failed` });
+    });
+};
+
 const exists = (name) => {
   return startConnection()
     .then(() =>
@@ -62,7 +87,7 @@ const exists = (name) => {
         name,
       })
     )
-    .then(person=>{
+    .then(person => {
       if (!person) {
         return Promise.reject({
           scode: 404,
@@ -99,18 +124,26 @@ const findPerson = (id) => {
     });
 };
 
-const updatePerson = (name, phone) => {
+const updatePerson = (id, data) => {
+  const { name, phone } = data
   if (!name || !phone) {
     return Promise.reject({ scode: 400, data: "Data incomplete" });
   }
-  return exists(name)
+  return findPerson(id)
+    .then(person => person.data)
     .then((person) => {
       person.phone = phone;
       return person.save();
     })
     .then((data) => ({ scode: 200, data }))
     .catch((error) => {
-      if (!error.scode) {
+      if (error.name === 'ValidationError') {
+        return Promise.reject({
+          scode: 400,
+          data: e.message,
+        });
+      }
+      else if (!error.scode) {
         return Promise.reject({ scode: 500, data: `updating ${name}'s phone number failed` });
       }
       return Promise.reject(error);
