@@ -5,7 +5,7 @@ const URL = "/api/persons"
 const getLink = id => `${URL}/${id}`
 
 const handleError = (e)=>{
-    const message = e.response.data || "Something went wrong";
+    const message = e.response.data.message || "Something went wrong";
     throw new Error(message)
 }
 
