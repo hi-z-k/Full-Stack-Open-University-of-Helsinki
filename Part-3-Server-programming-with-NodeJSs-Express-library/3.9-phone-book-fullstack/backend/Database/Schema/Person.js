@@ -1,16 +1,16 @@
-import mongoose from "mongoose"
+import mongoose from 'mongoose'
 const { Schema, model } = mongoose
 
 
 const personSchema = new Schema({
   name: {
     type: String,
-    minlength: [3, "the name must be at least three characters long."],
+    minlength: [3, 'the name must be at least three characters long.'],
   },
   phone: {
     type: String,
-    minlength: [8, "the phone number must be at least eight characters long."],
-    validate: { 
+    minlength: [8, 'the phone number must be at least eight characters long.'],
+    validate: {
       validator: (v) => /^\d{2,3}-\d+$/.test(v),
       message: props => `${props.value} is not a valid phone number!`
     }
