@@ -5,7 +5,15 @@ const totalLikes = blogs => {
     return likesCount
 }
 
+const favoriteBlog = blogs => {
+    let favBlog = blogs.reduce((max, blog)=>
+        (max.likes >= blog.likes) ? max : blog
+    , {})
+    return favBlog
+}
+
 export{
     dummy,
-    totalLikes
+    totalLikes, 
+    favoriteBlog
 }
