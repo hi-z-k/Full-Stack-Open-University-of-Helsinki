@@ -1,5 +1,5 @@
 import collections from "lodash"
-const {groupBy} = collections
+const {groupBy, map:mapColl} = collections
 
 
 const dummy = blogs => 1
@@ -16,14 +16,34 @@ const highest = (coll, param) =>{
 }
 
 const favoriteBlog = blogs => {
-    return highest(blogs,"likes")
+    const {author, likes} = highest(blogs,"likes")
+    if (author && likes){
+        return {author, likes}
+    }
+    else{
+        return {}
+    }
 }
 
+const agregateByAuthor = (blogs,{key,callback}) => {
+    const authBlog = groupBy(blogs, blogs=>blogs.author)
+    return mapColl(authBlog, (blogList, author)=>{return {author:author, [key]: callback(blogList)}})
+}
 
 const mostBlogs = blogs => {
-    const authBlog = groupBy(blogs, blogs=>blogs.author)
-    const authors = Object.keys(authBlog).map(author=>{return {author, blogs: authBlog[author].length}})
+    const authors = agregateByAuthor(blogs, {
+        key: "blogs",
+        callback: list=>list.length
+    })
     return highest(authors, "blogs")
+}
+
+const mostLikes = blogs => {
+    const authors = agregateByAuthor(blogs, {
+        key: "likes",
+        callback: list => totalLikes(list)
+    })
+    return highest(authors, "likes")
 }
 
 
@@ -31,5 +51,6 @@ export{
     dummy,
     totalLikes, 
     favoriteBlog,
-    mostBlogs
+    mostBlogs,
+    mostLikes
 }
