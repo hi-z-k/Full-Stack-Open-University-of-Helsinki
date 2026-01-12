@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test'
 import assert from 'node:assert'
-import { dummy, totalLikes, favoriteBlog } from '../utils/list_helper.js'
+import { dummy, totalLikes, favoriteBlog, mostBlogs } from '../utils/list_helper.js'
 import { blogs, listWithOneBlog } from './blogs.js'
 
 test('dummy returns one', () => {
@@ -30,7 +30,7 @@ describe('favorite blog', () => {
     const result = favoriteBlog([])
     assert.deepStrictEqual(result, {})
   })
-  test('when list has only one blog equals the likes of that', () => {
+  test('when list has only one blog', () => {
     const result = favoriteBlog(listWithOneBlog)
     assert.deepStrictEqual(result, ...listWithOneBlog)
   })
@@ -43,6 +43,26 @@ describe('favorite blog', () => {
       url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
       likes: 12,
       __v: 0
+    })
+  })
+})
+
+describe('most blogs', () => {
+  test('when list have no blog', () => {
+    const result = mostBlogs([])
+    assert.deepStrictEqual(result, {})
+  })
+  test('when list has only one blog', () => {
+    const result = mostBlogs(listWithOneBlog)
+    const { author } = listWithOneBlog[0]
+    const expected = { author, blogs: 1 }
+    assert.deepStrictEqual(result, expected)
+  })
+  test('when list has many blogs', () => {
+    const result = mostBlogs(blogs)
+    assert.deepStrictEqual(result, {
+      author: "Robert C. Martin",
+      blogs: 3
     })
   })
 })

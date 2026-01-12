@@ -1,3 +1,7 @@
+import collections from "lodash"
+const {groupBy} = collections
+
+
 const dummy = blogs => 1
 
 const totalLikes = blogs => {
@@ -5,15 +9,27 @@ const totalLikes = blogs => {
     return likesCount
 }
 
-const favoriteBlog = blogs => {
-    let favBlog = blogs.reduce((max, blog)=>
-        (max.likes >= blog.likes) ? max : blog
+const highest = (coll, param) =>{
+    return coll.reduce((max, blog)=>
+        (max[param] >= blog[param]) ? max : blog
     , {})
-    return favBlog
 }
+
+const favoriteBlog = blogs => {
+    return highest(blogs,"likes")
+}
+
+
+const mostBlogs = blogs => {
+    const authBlog = groupBy(blogs, blogs=>blogs.author)
+    const authors = Object.keys(authBlog).map(author=>{return {author, blogs: authBlog[author].length}})
+    return highest(authors, "blogs")
+}
+
 
 export{
     dummy,
     totalLikes, 
-    favoriteBlog
+    favoriteBlog,
+    mostBlogs
 }
