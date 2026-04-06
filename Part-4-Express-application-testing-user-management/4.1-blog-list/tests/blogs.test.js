@@ -27,7 +27,7 @@ describe('Tests on Blog Router', () => {
         const blogCount = response.body.length
         assert.strictEqual(blogCount, initialBlogs.length)
     })
-    test.only('The unique identifier for the blog is named id', async () => {
+    test('The unique identifier for the blog is named id', async () => {
         const response = await api
             .get("/api/blogs")
             .expect(200)
@@ -41,7 +41,7 @@ describe('Tests on Blog Router', () => {
 
         assert.strictEqual(isIdCreated, true)
     })
-    test.only('The blog is saved to database correctly', async () => {
+    test('The blog is saved to database correctly', async () => {
         const {title,url,author} = listWithOneBlog[0]
         const sendBlog = await api
             .post("/api/blogs")
@@ -63,6 +63,17 @@ describe('Tests on Blog Router', () => {
             blog.author == author &&
             blog.url == url 
         assert.strictEqual(isSavedCorrectly, true)
+    })
+    test.only('The blog like defaults to zero if likes is not provided',async()=>{
+        const {title,url,author} = listWithOneBlog[0]
+        const blogWithNoLikes = {title,url,author}
+        const sendBlog = await api
+            .post("/api/blogs")
+            .send(blogWithNoLikes)
+            .expect(201)
+        const blog = sendBlog.body
+        assert.strictEqual(blog.likes, 0)
+        assert.strictEqual("likes" in blogWithNoLikes, false)
     })
 })
 after(async () => {
