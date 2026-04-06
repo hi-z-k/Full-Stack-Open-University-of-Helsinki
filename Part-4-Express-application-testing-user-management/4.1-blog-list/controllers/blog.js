@@ -16,14 +16,17 @@ blogRouter.get('/', async (request, response, next) => {
 
 blogRouter.post('/', async (request, response, next) => {
   try{
-    const blog = new Blog(request.body)
+    const {author, title, url, likes} = request.body
+    if (!title || !url){
+      return response.status(400).json({error: "bad request"})
+    }
+    const blog = new Blog({title,url,author,likes})
     const blogResponse = await blog.save()
     response.status(201).json(blogResponse)
   }
   catch(e){
     next(e)
   }
-  
 })
 
 export default blogRouter

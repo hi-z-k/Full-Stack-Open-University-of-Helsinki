@@ -64,7 +64,7 @@ describe('Tests on Blog Router', () => {
             blog.url == url 
         assert.strictEqual(isSavedCorrectly, true)
     })
-    test.only('The blog like defaults to zero if likes is not provided',async()=>{
+    test('The blog like defaults to zero if likes is not provided',async()=>{
         const {title,url,author} = listWithOneBlog[0]
         const blogWithNoLikes = {title,url,author}
         const sendBlog = await api
@@ -74,6 +74,13 @@ describe('Tests on Blog Router', () => {
         const blog = sendBlog.body
         assert.strictEqual(blog.likes, 0)
         assert.strictEqual("likes" in blogWithNoLikes, false)
+    })
+    test.only('If title or url is missing from the blog being requested, the router will respond with HTTP 400', async ()=>{
+        const {author} = listWithOneBlog[0]
+        const sendBlog = await api
+            .post("/api/blogs")
+            .send({author})
+            .expect(400)
     })
 })
 after(async () => {
