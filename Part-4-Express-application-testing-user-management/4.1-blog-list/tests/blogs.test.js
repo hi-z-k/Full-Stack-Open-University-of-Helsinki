@@ -6,38 +6,63 @@ import supertest from 'supertest'
 import { initialBlogs } from './initialBlogs.js'
 import Blog from '../models/blog.js'
 import { info } from '../utils/logger.js'
+import { listWithOneBlog } from './blogs.js'
+
 
 const api = supertest(app)
 
-describe('Tests on Blog Router',()=>{
-    beforeEach(async()=>{
+describe('Tests on Blog Router', () => {
+    beforeEach(async () => {
         await Blog.deleteMany({})
         const promises = initialBlogs
-        .map(content=> new Blog(content))
-        .map(blog => blog.save())
+            .map(content => new Blog(content))
+            .map(blog => blog.save())
         await Promise.all(promises)
     })
-    test('The cluster contains 4+ Blog posts',async ()=>{
+    test('The cluster contains 4+ Blog posts', async () => {
         const response = await api
-        .get("/api/blogs")
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
-        const blogCount = response.body.length 
+            .get("/api/blogs")
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+        const blogCount = response.body.length
         assert.strictEqual(blogCount, initialBlogs.length)
     })
-    test.only('The unique identifier for the blog is named id',async ()=>{
+    test.only('The unique identifier for the blog is named id', async () => {
         const response = await api
-        .get("/api/blogs")
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
+            .get("/api/blogs")
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
         const blog = response.body[0]
         const content = initialBlogs[0]
-        const isIdCreated = 
-                "id" in blog &&
-                !("id" in content) &&
-                !("_id" in blog) 
+        const isIdCreated =
+            "id" in blog &&
+            !("id" in content) &&
+            !("_id" in blog)
 
         assert.strictEqual(isIdCreated, true)
+    })
+    test.only('The blog is saved to database correctly', async () => {
+        const {title,url,author} = listWithOneBlog[0]
+        const sendBlog = await api
+            .post("/api/blogs")
+            .send({title,url,author})
+            .expect(201)
+        const blog = sendBlog.body
+            
+        const response = await api
+            .get("/api/blogs")
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+        const currBlogCount = response.body.length
+        const prevBlogCount = initialBlogs.length
+        const isASingleBlogAdded = currBlogCount == prevBlogCount + 1
+        assert.ok(isASingleBlogAdded, "It isn't a single blog that is added")
+        
+        const isSavedCorrectly = 
+            blog.title == title &&
+            blog.author == author &&
+            blog.url == url 
+        assert.strictEqual(isSavedCorrectly, true)
     })
 })
 after(async () => {
