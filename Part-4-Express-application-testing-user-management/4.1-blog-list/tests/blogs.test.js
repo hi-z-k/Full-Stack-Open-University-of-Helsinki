@@ -77,7 +77,7 @@ describe('Tests on Blog Router', () => {
     })
     test.only('If title or url is missing from the blog being requested, the router will respond with HTTP 400', async ()=>{
         const {author} = listWithOneBlog[0]
-        const sendBlog = await api
+        await api
             .post("/api/blogs")
             .send({author})
             .expect(400)
