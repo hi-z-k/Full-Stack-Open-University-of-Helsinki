@@ -1,6 +1,5 @@
 import { Router } from 'express'
 import Blog from '../models/blog.js'
-import { panic } from '../utils/logger.js'
 const blogRouter = Router()
 
 
@@ -56,7 +55,6 @@ blogRouter.put('/:id', async (request, response, next)=>{
   catch(e){
     next(e)
   }
-
 })
 
 export default blogRouter
