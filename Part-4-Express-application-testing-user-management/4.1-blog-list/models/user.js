@@ -4,12 +4,11 @@ const userSchema = Schema({
     name: {
         type: String,
         required: true,
-        minlength: 5
     },
     username: {
         type: String,
         required: true,
-        minlength: 5,
+        minlength: 3,
         unique: true
     },
     passwordHash: {
