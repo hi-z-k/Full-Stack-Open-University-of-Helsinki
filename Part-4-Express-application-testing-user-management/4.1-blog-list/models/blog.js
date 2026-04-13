@@ -8,6 +8,11 @@ const blogSchema = Schema({
     type: Number,
     default: 0
   },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref:"User",
+    required: true
+  }
 })
 
 blogSchema.set('toJSON', {
