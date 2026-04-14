@@ -17,17 +17,22 @@ blogRouter.get('/', async (request, response, next) => {
 })
 
 blogRouter.post('/', async (request, response, next) => {
+  const user = request.user
   try{
-    const {author, title, url, likes, user} = request.body
-    const userDB = await User.findById(user)
-    if (!userDB) {
-      return response.status(400).json({ error: 'userId missing or not valid' })
-    }
+    const {author, title, url, likes} = request.body
     if (!title || !url){
       return response.status(400).json({error: "bad request"})
     }
-    const blog = new Blog({title,url,author,likes,user})
+    const blog = new Blog({
+      title,
+      url,
+      author,
+      likes,
+      user: user._id
+    })
     const blogResponse = await blog.save()
+    user.blogs = user.blogs.concat(blogResponse._id)
+    await user.save()
     response.status(201).json(blogResponse)
   }
   catch(e){
@@ -35,8 +40,16 @@ blogRouter.post('/', async (request, response, next) => {
   }
 })
 blogRouter.delete('/:id', async (request, response, next)=>{
+  const user = request.user
   try{
     const id = request.params.id
+    const blog = await Blog.findById(id)
+    if (!blog) {
+      return response.status(404).json({ error: 'blog not found' })
+    }
+    if (blog.user.toString() !== user._id.toString()) {
+      return response.status(403).json({ error: 'only the creator can delete this blog' })
+    }
     await Blog.findByIdAndDelete(id)
     response.status(204).end()
   }
@@ -45,18 +58,21 @@ blogRouter.delete('/:id', async (request, response, next)=>{
   }
 })
 blogRouter.put('/:id', async (request, response, next)=>{
+  const user = request.user
   const {title, author, url, likes} = request.body
-  const blog = {title, author, url, likes}
+  const newBlog = {title, author, url, likes}
   try{
     const id = request.params.id
+    const blog = await Blog.findById(id)
+    if (!blog) {
+      return response.status(404).json({ error: 'blog not found' })
+    }
     const updatedBlog = await Blog.findByIdAndUpdate(
       id,
-      blog,
+      newBlog,
       { new: true, runValidators: true, context: 'query' }
-    )
-    if (!updatedBlog){
-      return response.status(404).end()
-    }
+    ).populate('user', { name: 1, username: 1 })
+    
     response.status(200).json(updatedBlog)
   }
   catch(e){
