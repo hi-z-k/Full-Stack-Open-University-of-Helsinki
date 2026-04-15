@@ -58,7 +58,6 @@ blogRouter.delete('/:id', async (request, response, next)=>{
   }
 })
 blogRouter.put('/:id', async (request, response, next)=>{
-  const user = request.user
   const {title, author, url, likes} = request.body
   const newBlog = {title, author, url, likes}
   try{
@@ -72,7 +71,7 @@ blogRouter.put('/:id', async (request, response, next)=>{
       newBlog,
       { new: true, runValidators: true, context: 'query' }
     ).populate('user', { name: 1, username: 1 })
-    
+
     response.status(200).json(updatedBlog)
   }
   catch(e){

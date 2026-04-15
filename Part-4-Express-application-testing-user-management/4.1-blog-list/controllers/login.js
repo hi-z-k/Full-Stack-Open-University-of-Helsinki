@@ -14,7 +14,6 @@ loginRouter.post("/", async (request, response, next)=>{
         const { username, password } = request.body
         const user = await User.findOne({ username })
         const {passwordHash, id, name} = user.toJSON()
-        console.log(password, passwordHash)
         const isCorrectPassword = 
             user === null 
                 ? false 

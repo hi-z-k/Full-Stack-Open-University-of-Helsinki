@@ -13,7 +13,6 @@ const userSchema = Schema({
     },
     passwordHash: {
         type: String,
-        required: true,
     },
     blogs: [
         {
