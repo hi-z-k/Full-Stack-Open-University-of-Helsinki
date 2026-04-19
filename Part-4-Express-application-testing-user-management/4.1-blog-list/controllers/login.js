@@ -21,8 +21,6 @@ loginRouter.post("/", async (request, response, next)=>{
         if (!(user && isCorrectPassword)){
             return response.status(401).json({
                 error: 'invalid username or password',
-                isCorrectPassword,
-                user: user !== null
             })
         }
         const token = sign({username, id}, SECRET)
