@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
-import {getAll, setToken} from './services/blogs'
+import { getAll, setToken, createNote } from './services/blogs'
 import LoginForm from './components/LoginForm'
 import { login } from './services/login'
+import NoteForm from './components/NoteForm'
 const localStorage = window.localStorage
 
 const App = () => {
@@ -32,7 +33,17 @@ const App = () => {
       localStorage.setItem('loginUser', JSON.stringify(user))
     }
     catch(e){
-      console.log(e.user)
+      console.error(e.user)
+    }
+  }
+
+    const handleCreateNote = async(newNote)=>{
+    try{
+      const note = await createNote(newNote)
+      setBlogs(blogs.concat(note))
+    }
+    catch(e){
+      console.error(e.message)
     }
   }
 
@@ -51,6 +62,7 @@ const App = () => {
             Logout
           </button>
         </h4>
+          <NoteForm onCreate={handleCreateNote} />
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
         )}
