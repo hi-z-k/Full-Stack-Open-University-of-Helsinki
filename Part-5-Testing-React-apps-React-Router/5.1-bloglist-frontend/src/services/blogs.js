@@ -7,11 +7,11 @@ const setToken = tokenRaw =>{
 }
 
 
-const createNote = async(note)=>{
+const createBlog = async(blog)=>{
   const config = {
     headers: { Authorization: `Bearer ${token}` }
   }
-  const response = await axios.post(url, note, config)
+  const response = await axios.post(url, blog, config)
   return response.data
 }
 
@@ -22,4 +22,4 @@ const getAll = () => {
 
 
 
-export { getAll, setToken, createNote }
+export { getAll, setToken, createBlog }

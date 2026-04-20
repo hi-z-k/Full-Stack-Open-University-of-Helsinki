@@ -1,14 +1,39 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
-import { getAll, setToken, createNote } from './services/blogs'
+import { getAll, setToken, createBlog } from './services/blogs'
 import LoginForm from './components/LoginForm'
 import { login } from './services/login'
 import NoteForm from './components/NoteForm'
+import Notification from './components/Notification'
 const localStorage = window.localStorage
+
+
+
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
+  const [notification, setNotification] = useState(null)
+  const setSuccessNotification = (message) => {
+      setNotification({
+        "message": message,
+        "type": "success"
+      })
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+  }
+  const setErrorNotification = (message) => {
+      setNotification({
+        "message": message,
+        "type": "error"
+      })
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+  }
+  
   
   useEffect(() => {
     getAll().then(blogs =>
@@ -31,23 +56,27 @@ const App = () => {
       setUser(user)
       setToken(user.token)
       localStorage.setItem('loginUser', JSON.stringify(user))
+      setSuccessNotification(`${user.name} logged in successfully`)
     }
     catch(e){
-      console.error(e.user)
+      setErrorNotification(`Login Failed: ${e.message}`)
     }
   }
 
-    const handleCreateNote = async(newNote)=>{
+    const handleCreateBlog = async(newBlog)=>{
     try{
-      const note = await createNote(newNote)
-      setBlogs(blogs.concat(note))
+      const blog = await createBlog(newBlog)
+      setSuccessNotification(`a new blog "${blog.title}" by ${blog.author} added`)
+      setBlogs(blogs.concat(blog))
     }
     catch(e){
       console.error(e.message)
+      setErrorNotification(`Blog Creation Failed: ${e.message}`)
     }
   }
 
   const handleLogout = ()=>{
+    setSuccessNotification(`"${user.name}" has logged off`)
     setUser(null)
     setToken(null)
     localStorage.removeItem('loginUser')
@@ -55,14 +84,15 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      {notification && <Notification data={notification}/>}
       {user ? <>
         <h4>
-          {user.name} is logged in
+          {user.name}
           <button onClick={handleLogout}>
             Logout
           </button>
         </h4>
-          <NoteForm onCreate={handleCreateNote} />
+          <NoteForm onCreate={handleCreateBlog} />
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
         )}
