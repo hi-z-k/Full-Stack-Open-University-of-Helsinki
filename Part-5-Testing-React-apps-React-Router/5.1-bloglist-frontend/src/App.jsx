@@ -5,6 +5,7 @@ import LoginForm from './components/LoginForm'
 import { login } from './services/login'
 import NoteForm from './components/NoteForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 const localStorage = window.localStorage
 
 
@@ -92,7 +93,9 @@ const App = () => {
             Logout
           </button>
         </h4>
+        <Togglable buttonLabel={"create new blog"}>
           <NoteForm onCreate={handleCreateBlog} />
+        </Togglable>
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
         )}
