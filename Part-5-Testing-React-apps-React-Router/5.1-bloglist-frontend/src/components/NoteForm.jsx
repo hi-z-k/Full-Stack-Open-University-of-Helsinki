@@ -13,7 +13,7 @@ const NoteForm = ({onCreate}) => {
     setAuthor("")
     setUrl("")
   }
-  return <form onSubmit={e=>handleNote(e)}>
+  return <form onSubmit={handleNote}>
     <h3>Create a new Note</h3>
     <div>
       <label>
