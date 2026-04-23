@@ -1,8 +1,10 @@
 import { useState } from "react"
 
-const Blog = ({ blog }) => {
+
+const Blog = ({ blog, onLike }) => {
   const [viewAll, setViewAll] = useState(false)
-  const handleViewAll = ()=>setViewAll(!viewAll)
+  const [isLiked, setIsLiked] = useState(false)
+  const handleViewAll = () => setViewAll(!viewAll)
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -10,16 +12,22 @@ const Blog = ({ blog }) => {
     borderWidth: 1,
     marginBottom: 5
   }
+  const handleLike = () => {
+    onLike(blog, isLiked)
+    setIsLiked(!isLiked)
+  }
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author}
-      <button onClick={handleViewAll}>{viewAll?"view":"hide"}</button>
+      <button onClick={handleViewAll}>{viewAll ? "hide" : "view"}</button>
       {viewAll && <>
-      <div>{blog.url}</div>
-      <div>likes {blog.likes}</div>
-      <div>{blog.user.name}</div>
+        <div>{blog.url}</div>
+        <div>likes {blog.likes}
+          <button onClick={handleLike}>{isLiked ? "unlike" : "like"}</button>
+        </div>
+        <div>{blog.user.name}</div>
       </>}
-      
+
     </div>
   )
 }

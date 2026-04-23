@@ -15,11 +15,25 @@ const createBlog = async(blog)=>{
   return response.data
 }
 
-const getAll = () => {
-  const request = axios.get(url)
-  return request.then(response => response.data)
+const getAll = async () => {
+  const response = await axios.get(url)
+  return response.data
 }
 
 
+const addLike = async (blog)=>{
+  const {id, likes} = blog
+  const idUrl = `${url}/${id}`
+  const response = await axios.put(idUrl, {likes: likes+1})
+  return response.data
+}
 
-export { getAll, setToken, createBlog }
+const removeLike = async (blog)=>{
+  const {id, likes} = blog
+  const idUrl = `${url}/${id}`
+  const response = await axios.put(idUrl, {likes: likes-1})
+  return response.data
+}
+
+
+export { getAll, setToken, createBlog, addLike, removeLike }

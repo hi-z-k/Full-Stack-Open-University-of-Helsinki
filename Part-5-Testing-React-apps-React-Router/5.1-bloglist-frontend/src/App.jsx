@@ -1,15 +1,12 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
-import { getAll, setToken, createBlog } from './services/blogs'
+import { getAll, setToken, createBlog, addLike, removeLike } from './services/blogs'
 import LoginForm from './components/LoginForm'
 import { login } from './services/login'
 import NoteForm from './components/NoteForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 const localStorage = window.localStorage
-
-
-
 
 
 const App = () => {
@@ -76,6 +73,21 @@ const App = () => {
     }
   }
 
+  const onLike = async(blog, isLiked)=>{
+  try {  let updatedBlog; 
+    if (!isLiked){
+      updatedBlog = await addLike(blog)
+    }
+    else{
+      updatedBlog = await removeLike(blog)
+    }
+    setBlogs(blogs.map(b => b.id === updatedBlog.id ? updatedBlog : b))
+  }
+  catch(e){
+    setErrorNotification(`Blog Liking Failed: ${e.message}`) 
+  }
+}
+
   const handleLogout = ()=>{
     setSuccessNotification(`"${user.name}" has logged off`)
     setUser(null)
@@ -97,7 +109,7 @@ const App = () => {
           <NoteForm onCreate={handleCreateBlog} />
         </Togglable>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} onLike={onLike}/>
         )}
       </>
       :<>

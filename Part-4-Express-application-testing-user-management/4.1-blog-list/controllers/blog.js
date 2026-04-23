@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import Blog from '../models/blog.js'
 import User from '../models/user.js'
+import { userFetcher } from '../utils/middleware.js'
 const blogRouter = Router()
 
 
@@ -16,7 +17,7 @@ blogRouter.get('/', async (request, response, next) => {
   }
 })
 
-blogRouter.post('/', async (request, response, next) => {
+blogRouter.post('/', userFetcher, async (request, response, next) => {
   const user = request.user
   try{
     const {author, title, url, likes} = request.body
@@ -39,7 +40,7 @@ blogRouter.post('/', async (request, response, next) => {
     next(e)
   }
 })
-blogRouter.delete('/:id', async (request, response, next)=>{
+blogRouter.delete('/:id', userFetcher, async (request, response, next)=>{
   const user = request.user
   try{
     const id = request.params.id
@@ -57,21 +58,47 @@ blogRouter.delete('/:id', async (request, response, next)=>{
     next(e)
   }
 })
-blogRouter.put('/:id', async (request, response, next)=>{
-  const {title, author, url, likes} = request.body
-  const newBlog = {title, author, url, likes}
+blogRouter.put('/update/:id', userFetcher, async (request, response, next)=>{
+  const user = request.user
+  const {title, author, url} = request.body
   try{
     const id = request.params.id
     const blog = await Blog.findById(id)
     if (!blog) {
       return response.status(404).json({ error: 'blog not found' })
     }
+    if (blog.user.toString() !== user._id.toString()) {
+      return response.status(403).json({ error: 'only the creator can delete this blog' })
+    }
+    const newBlog = {title, author, url}
     const updatedBlog = await Blog.findByIdAndUpdate(
       id,
       newBlog,
       { new: true, runValidators: true, context: 'query' }
     ).populate('user', { name: 1, username: 1 })
 
+    response.status(200).json(updatedBlog)
+  }
+  catch(e){
+    next(e)
+  }
+})
+blogRouter.put('/:id', async (request, response, next)=>{
+  const {likes} = request.body
+  try{
+    const id = request.params.id
+    const blog = await Blog.findById(id)
+    if (likes == null || likes < 0){
+      return response.status(400).json({ error: 'like is not provided' })
+    }
+    if (!blog) {
+      return response.status(404).json({ error: 'blog not found' })
+    }
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      id,
+      {likes},
+      { new: true, runValidators: true, context: 'query' }
+    ).populate('user', { name: 1, username: 1 })
     response.status(200).json(updatedBlog)
   }
   catch(e){
