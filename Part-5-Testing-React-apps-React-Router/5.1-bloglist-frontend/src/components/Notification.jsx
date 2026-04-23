@@ -1,11 +1,11 @@
 import  '../index.css'
 
-const Notification = ({data}) => {
-  const {message,type} = data
+const Notification = ({ data }) => {
+  const { message,type } = data
   if (!message) {
-    return null;
+    return null
   }
-  return <div className={type}>{message}</div>;
-};
+  return <div className={type}>{message}</div>
+}
 
-export default Notification;
+export default Notification

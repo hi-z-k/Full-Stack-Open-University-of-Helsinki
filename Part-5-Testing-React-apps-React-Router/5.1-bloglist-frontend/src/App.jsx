@@ -14,35 +14,35 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
   const setSuccessNotification = (message) => {
-      setNotification({
-        "message": message,
-        "type": "success"
-      })
-      setTimeout(() => {
-        setNotification(null)
-      }, 5000)
+    setNotification({
+      'message': message,
+      'type': 'success'
+    })
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
   }
   const setErrorNotification = (message) => {
-      setNotification({
-        "message": message,
-        "type": "error"
-      })
-      setTimeout(() => {
-        setNotification(null)
-      }, 5000)
+    setNotification({
+      'message': message,
+      'type': 'error'
+    })
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
   }
-  
-  const setAndSortBlogs = (blogs)=>{
-    blogs.sort((a,b)=> b.likes-a.likes)
+
+  const setAndSortBlogs = (blogs) => {
+    blogs.sort((a,b) => b.likes-a.likes)
     setBlogs(blogs)
   }
-  
+
   useEffect(() => {
     getAll().then(blogs =>
       setAndSortBlogs( blogs )
-    )  
+    )
   }, [])
-  useEffect(()=>{
+  useEffect(() => {
     const loggedUser = localStorage.getItem('loginUser')
     if (loggedUser){
       const user = JSON.parse(loggedUser)
@@ -52,7 +52,7 @@ const App = () => {
   }, [])
 
 
-  const handleLogin = async(credential)=>{
+  const handleLogin = async(credential) => {
     try{
       const user = await login(credential)
       setUser(user)
@@ -65,18 +65,18 @@ const App = () => {
     }
   }
 
-    const handleRemove = async (id) => {
-      try{
-        await deleteBlog(id)
-        const newBlogs = blogs.filter(b=>b.id !== id)
-        setAndSortBlogs(newBlogs)
-      }
-      catch(e){
-        setErrorNotification(`Blog Deletion Failed: ${e.message}`)
-      }
+  const handleRemove = async (id) => {
+    try{
+      await deleteBlog(id)
+      const newBlogs = blogs.filter(b => b.id !== id)
+      setAndSortBlogs(newBlogs)
     }
+    catch(e){
+      setErrorNotification(`Blog Deletion Failed: ${e.message}`)
+    }
+  }
 
-  const handleCreateBlog = async(newBlog)=>{
+  const handleCreateBlog = async(newBlog) => {
     try{
       const blog = await createBlog(newBlog)
       setSuccessNotification(`a new blog "${blog.title}" by ${blog.author} added`)
@@ -88,22 +88,22 @@ const App = () => {
     }
   }
 
-  const onLike = async(blog, isLiked)=>{
-  try {  let updatedBlog; 
-    if (!isLiked){
-      updatedBlog = await addLike(blog)
+  const onLike = async(blog, isLiked) => {
+    try {  let updatedBlog
+      if (!isLiked){
+        updatedBlog = await addLike(blog)
+      }
+      else{
+        updatedBlog = await removeLike(blog)
+      }
+      setAndSortBlogs(blogs.map(b => b.id === updatedBlog.id ? updatedBlog : b))
     }
-    else{
-      updatedBlog = await removeLike(blog)
+    catch(e){
+      setErrorNotification(`Blog Liking Failed: ${e.message}`)
     }
-    setAndSortBlogs(blogs.map(b => b.id === updatedBlog.id ? updatedBlog : b))
   }
-  catch(e){
-    setErrorNotification(`Blog Liking Failed: ${e.message}`) 
-  }
-}
 
-  const handleLogout = ()=>{
+  const handleLogout = () => {
     setSuccessNotification(`"${user.name}" has logged off`)
     setUser(null)
     setToken(null)
@@ -120,17 +120,17 @@ const App = () => {
             Logout
           </button>
         </h4>
-        <Togglable buttonLabel={"create new blog"}>
+        <Togglable buttonLabel={'create new blog'}>
           <NoteForm onCreate={handleCreateBlog} />
         </Togglable>
         {blogs.map(blog =>
-          <Blog key={blog.id} data={{blog,user}} onLike={onLike} onRemove={handleRemove}/>
+          <Blog key={blog.id} data={{ blog,user }} onLike={onLike} onRemove={handleRemove}/>
         )}
       </>
-      :<>
-        <h4>Log in to application</h4>
-        {!user && <LoginForm onLogin={handleLogin}/>}
-      </>}
+        :<>
+          <h4>Log in to application</h4>
+          {!user && <LoginForm onLogin={handleLogin}/>}
+        </>}
     </div>
   )
 }

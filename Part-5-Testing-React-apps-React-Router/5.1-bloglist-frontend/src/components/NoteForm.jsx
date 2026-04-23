@@ -1,17 +1,17 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 
-const NoteForm = ({onCreate}) => {
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [url, setUrl] = useState("")
+const NoteForm = ({ onCreate }) => {
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
   const handleNote = (e) => {
     e.preventDefault()
-    onCreate({title, author, url})
-    setTitle("")
-    setAuthor("")
-    setUrl("")
+    onCreate({ title, author, url })
+    setTitle('')
+    setAuthor('')
+    setUrl('')
   }
   return <form onSubmit={handleNote}>
     <h3>Create a new Note</h3>
@@ -21,8 +21,8 @@ const NoteForm = ({onCreate}) => {
         <input
           type="text"
           value={title}
-          onChange={({target})=>setTitle(target.value)}
-          />
+          onChange={({ target }) => setTitle(target.value)}
+        />
       </label>
     </div>
     <div>
@@ -31,8 +31,8 @@ const NoteForm = ({onCreate}) => {
         <input
           type="text"
           value={author}
-          onChange={({target})=>setAuthor(target.value)}
-          />
+          onChange={({ target }) => setAuthor(target.value)}
+        />
       </label>
     </div>
     <div>
@@ -41,8 +41,8 @@ const NoteForm = ({onCreate}) => {
         <input
           type="url"
           value={url}
-          onChange={({target})=>setUrl(target.value)}
-          />
+          onChange={({ target }) => setUrl(target.value)}
+        />
       </label>
     </div>
     <button type="submit">Create</button>
