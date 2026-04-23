@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
-import { getAll, setToken, createBlog, addLike, removeLike } from './services/blogs'
+import { getAll, setToken, createBlog, addLike, removeLike, deleteBlog } from './services/blogs'
 import LoginForm from './components/LoginForm'
 import { login } from './services/login'
 import NoteForm from './components/NoteForm'
@@ -65,7 +65,18 @@ const App = () => {
     }
   }
 
-    const handleCreateBlog = async(newBlog)=>{
+    const handleRemove = async (id) => {
+      try{
+        await deleteBlog(id)
+        const newBlogs = blogs.filter(b=>b.id !== id)
+        setAndSortBlogs(newBlogs)
+      }
+      catch(e){
+        setErrorNotification(`Blog Deletion Failed: ${e.message}`)
+      }
+    }
+
+  const handleCreateBlog = async(newBlog)=>{
     try{
       const blog = await createBlog(newBlog)
       setSuccessNotification(`a new blog "${blog.title}" by ${blog.author} added`)
@@ -113,7 +124,7 @@ const App = () => {
           <NoteForm onCreate={handleCreateBlog} />
         </Togglable>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} onLike={onLike}/>
+          <Blog key={blog.id} data={{blog,user}} onLike={onLike} onRemove={handleRemove}/>
         )}
       </>
       :<>

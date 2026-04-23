@@ -1,7 +1,8 @@
 import { useState } from "react"
 
 
-const Blog = ({ blog, onLike }) => {
+const Blog = ({ data, onLike, onRemove }) => {
+  const {user,blog} = data
   const [viewAll, setViewAll] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
   const handleViewAll = () => setViewAll(!viewAll)
@@ -16,6 +17,12 @@ const Blog = ({ blog, onLike }) => {
     onLike(blog, isLiked)
     setIsLiked(!isLiked)
   }
+  const handleRemove = ()=>{
+    if (window.confirm(`Remove ${blog.title} by ${blog.author}`)){
+      onRemove(blog.id)
+    }
+  }
+  const isSameUser = user.username === blog.user.username
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author}
@@ -26,8 +33,9 @@ const Blog = ({ blog, onLike }) => {
           <button onClick={handleLike}>{isLiked ? "unlike" : "like"}</button>
         </div>
         <div>{blog.user.name}</div>
+        {(isSameUser) &&
+        <button onClick={handleRemove}>remove</button>}
       </>}
-
     </div>
   )
 }
