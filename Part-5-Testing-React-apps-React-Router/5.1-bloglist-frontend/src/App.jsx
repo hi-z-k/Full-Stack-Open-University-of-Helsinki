@@ -32,10 +32,14 @@ const App = () => {
       }, 5000)
   }
   
+  const setAndSortBlogs = (blogs)=>{
+    blogs.sort((a,b)=> b.likes-a.likes)
+    setBlogs(blogs)
+  }
   
   useEffect(() => {
     getAll().then(blogs =>
-      setBlogs( blogs )
+      setAndSortBlogs( blogs )
     )  
   }, [])
   useEffect(()=>{
@@ -65,7 +69,7 @@ const App = () => {
     try{
       const blog = await createBlog(newBlog)
       setSuccessNotification(`a new blog "${blog.title}" by ${blog.author} added`)
-      setBlogs(blogs.concat(blog))
+      setAndSortBlogs(blogs.concat(blog))
     }
     catch(e){
       console.error(e.message)
@@ -81,7 +85,7 @@ const App = () => {
     else{
       updatedBlog = await removeLike(blog)
     }
-    setBlogs(blogs.map(b => b.id === updatedBlog.id ? updatedBlog : b))
+    setAndSortBlogs(blogs.map(b => b.id === updatedBlog.id ? updatedBlog : b))
   }
   catch(e){
     setErrorNotification(`Blog Liking Failed: ${e.message}`) 
