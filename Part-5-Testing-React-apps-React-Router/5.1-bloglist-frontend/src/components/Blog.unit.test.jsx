@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
+import { test } from 'vitest'
 
 const blog = {
   'title': 'Brave New World',

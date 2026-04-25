@@ -3,7 +3,7 @@ import Blog from './components/Blog'
 import { getAll, setToken, createBlog, addLike, removeLike, deleteBlog } from './services/blogs'
 import LoginForm from './components/LoginForm'
 import { login } from './services/login'
-import NoteForm from './components/NoteForm'
+import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 const localStorage = window.localStorage
@@ -121,7 +121,7 @@ const App = () => {
           </button>
         </h4>
         <Togglable buttonLabel={'create new blog'}>
-          <NoteForm onCreate={handleCreateBlog} />
+          <BlogForm onCreate={handleCreateBlog} />
         </Togglable>
         {blogs.map(blog =>
           <Blog key={blog.id} data={{ blog,user }} onLike={onLike} onRemove={handleRemove}/>

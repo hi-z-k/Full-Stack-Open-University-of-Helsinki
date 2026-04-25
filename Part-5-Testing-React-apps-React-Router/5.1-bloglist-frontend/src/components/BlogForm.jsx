@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 
-const NoteForm = ({ onCreate }) => {
+const BlogForm = ({ onCreate }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -14,7 +14,7 @@ const NoteForm = ({ onCreate }) => {
     setUrl('')
   }
   return <form onSubmit={handleNote}>
-    <h3>Create a new Note</h3>
+    <h3>Create a new Blog</h3>
     <div>
       <label>
         title
@@ -49,4 +49,4 @@ const NoteForm = ({ onCreate }) => {
   </form>
 }
 
-export default NoteForm
+export default BlogForm
