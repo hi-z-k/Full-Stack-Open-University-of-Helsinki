@@ -24,7 +24,7 @@ const Blog = ({ data, onLike, onRemove }) => {
   }
   const isSameUser = user.username === blog.user.username
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       {blog.title} {blog.author}
       <button onClick={handleViewAll}>{viewAll ? 'hide' : 'view'}</button>
       {viewAll && <>
