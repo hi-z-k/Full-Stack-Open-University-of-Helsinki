@@ -30,7 +30,7 @@ const Blog = ({ data, onLike, onRemove }) => {
       {viewAll && <>
         <div>{blog.url}</div>
         <div>likes {blog.likes}
-          <button onClick={handleLike}>{isLiked ? 'unlike' : 'like'}</button>
+          <button aria-label='like' onClick={handleLike}>{isLiked ? 'unlike' : 'like'}</button>
         </div>
         <div>{blog.user.name}</div>
         {(isSameUser) &&
