@@ -1,4 +1,5 @@
 import { test, expect, beforeEach, describe } from '@playwright/test';
+import { createBlog, loginWith } from './helper';
 
 describe('Blog app', () => {
     beforeEach(async ({ page, request }) => {
@@ -20,18 +21,23 @@ describe('Blog app', () => {
     })
     describe('Login', () => {
         test('succeeds with correct credentials', async ({ page }) => {
-            await page.getByRole('textbox', { name: 'username' }).fill('mluukkai');
-            await page.getByRole('textbox', { name: 'password' }).fill('salainen');
-            await page.getByRole('button', { name: 'Login' }).click();
+            await loginWith(page, 'mluukkai', 'salainen')
             await expect(page.getByText('Matti Luukkainen logged in')).toBeVisible();
         })
 
         test('fails with wrong credentials', async ({ page }) => {
-            await page.getByRole('textbox', { name: 'username' }).fill('mluukkai');
-            await page.getByRole('textbox', { name: 'password' }).fill('wrongpassword');
-            await page.getByRole('button', { name: 'Login' }).click();
+            await loginWith(page, 'mluukkai', 'wrongpassword')
             await expect(page.getByText('Login Failed: Request failed')).toBeVisible();
         })
     })
-
+    describe('When logged in', () => {
+        beforeEach(async ({ page }) => {
+            await loginWith(page, 'mluukkai', 'salainen')
+        })
+        test('a new blog can be created', async ({ page }) => {
+            await createBlog(page, '1984', 'George Orwell', 'https://www.archive.org/details/1984-george-orwell')
+            await expect(page.getByText('a new blog "1984" by George')).toBeVisible();
+        })
+    })
 })
+
