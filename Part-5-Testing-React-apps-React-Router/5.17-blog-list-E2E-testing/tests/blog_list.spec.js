@@ -39,5 +39,18 @@ describe('Blog app', () => {
             await expect(page.getByText('a new blog "1984" by George')).toBeVisible();
         })
     })
+    describe('When there is a blog', () => {
+        let blog
+        beforeEach(async ({ page }) => {
+            await loginWith(page, 'mluukkai', 'salainen')
+            await createBlog(page, '1984', 'George Orwell', 'https://www.archive.org/details/1984-george-orwell')
+            blog = page.locator('.blog', { hasText: '1984' })
+            await blog.getByRole('button', { name: 'view' }).click();
+        })
+        test('a blog can be liked', async ({ page }) => {
+            await expect(blog.getByText('likes 0')).toBeVisible();
+            await blog.getByRole('button', { name: 'like' }).click();
+            await expect(blog.getByText('likes 1')).toBeVisible();
+        })
+    })
 })
-
