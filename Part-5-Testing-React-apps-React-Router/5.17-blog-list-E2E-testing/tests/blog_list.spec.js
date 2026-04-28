@@ -52,5 +52,25 @@ describe('Blog app', () => {
             await blog.getByRole('button', { name: 'like' }).click();
             await expect(blog.getByText('likes 1')).toBeVisible();
         })
+        test.only('a blog can be removed', async ({ page }) => {
+            await blog.getByRole('button', { name: 'like' }).click();
+            page.once('dialog', async (dialog) => {
+                await dialog.accept();
+            });
+            await blog.getByRole('button', { name: 'remove' }).click();
+            await expect(page.locator('.blog', { hasText: '1984' })).toHaveCount(0);
+        })
     })
 })
+
+
+// import { test, expect } from '@playwright/test';
+
+// test('test', async ({ page }) => {
+
+//     page.once('dialog', dialog => {
+//         console.log(`Dialog message: ${dialog.message()}`);
+//         dialog.dismiss().catch(() => { });
+//     });
+//     await page.getByRole('button', { name: 'remove' }).click();
+// });
