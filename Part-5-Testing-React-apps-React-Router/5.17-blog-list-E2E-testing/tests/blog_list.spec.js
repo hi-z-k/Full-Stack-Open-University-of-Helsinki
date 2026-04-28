@@ -18,7 +18,20 @@ describe('Blog app', () => {
         await expect(page.getByRole('textbox', { name: 'password' })).toBeVisible();
         await expect(page.getByRole('button', { name: 'Login' })).toBeVisible();
     })
+    describe('Login', () => {
+        test('succeeds with correct credentials', async ({ page }) => {
+            await page.getByRole('textbox', { name: 'username' }).fill('mluukkai');
+            await page.getByRole('textbox', { name: 'password' }).fill('salainen');
+            await page.getByRole('button', { name: 'Login' }).click();
+            await expect(page.getByText('Matti Luukkainen logged in')).toBeVisible();
+        })
 
+        test('fails with wrong credentials', async ({ page }) => {
+            await page.getByRole('textbox', { name: 'username' }).fill('mluukkai');
+            await page.getByRole('textbox', { name: 'password' }).fill('wrongpassword');
+            await page.getByRole('button', { name: 'Login' }).click();
+            await expect(page.getByText('Login Failed: Request failed')).toBeVisible();
+        })
+    })
 
 })
-
