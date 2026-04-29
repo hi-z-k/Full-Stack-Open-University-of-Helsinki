@@ -1,5 +1,5 @@
 import { test, expect, beforeEach, describe } from '@playwright/test';
-import { createBlog, loginWith } from './helper';
+import { createBlog, createSampleMultipleBlogs, loginWith } from './helper';
 
 describe('Blog app', () => {
     beforeEach(async ({ page, request }) => {
@@ -9,6 +9,13 @@ describe('Blog app', () => {
                 name: 'Matti Luukkainen',
                 username: 'mluukkai',
                 password: 'salainen'
+            }
+        })
+        await request.post('/api/users', {
+            data: {
+                name: "Kalle Ilves",
+                username: "kilves",
+                password: "kallesecret"
             }
         })
         await page.goto('/')
@@ -52,7 +59,7 @@ describe('Blog app', () => {
             await blog.getByRole('button', { name: 'like' }).click();
             await expect(blog.getByText('likes 1')).toBeVisible();
         })
-        test.only('a blog can be removed', async ({ page }) => {
+        test('a blog can be removed', async ({ page }) => {
             await blog.getByRole('button', { name: 'like' }).click();
             page.once('dialog', async (dialog) => {
                 await dialog.accept();
@@ -60,17 +67,10 @@ describe('Blog app', () => {
             await blog.getByRole('button', { name: 'remove' }).click();
             await expect(page.locator('.blog', { hasText: '1984' })).toHaveCount(0);
         })
+        test('only the user that created the blog can see its remove button', async ({ page }) => {
+            await page.getByRole('button', { name: 'Logout' }).click();
+            await loginWith(page, 'kilves', 'kallesecret')
+            await expect(blog.getByRole('button', { name: 'remove' })).not.toBeVisible()
+        })
     })
 })
-
-
-// import { test, expect } from '@playwright/test';
-
-// test('test', async ({ page }) => {
-
-//     page.once('dialog', dialog => {
-//         console.log(`Dialog message: ${dialog.message()}`);
-//         dialog.dismiss().catch(() => { });
-//     });
-//     await page.getByRole('button', { name: 'remove' }).click();
-// });
