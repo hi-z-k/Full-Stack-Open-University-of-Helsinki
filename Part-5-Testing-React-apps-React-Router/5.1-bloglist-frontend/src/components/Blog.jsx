@@ -29,7 +29,7 @@ const Blog = ({ data, onLike, onRemove }) => {
       <button onClick={handleViewAll}>{viewAll ? 'hide' : 'view'}</button>
       {viewAll && <>
         <div>{blog.url}</div>
-        <div>likes {blog.likes}
+        <div>likes <span className='.like'>{blog.likes}</span>
           <button aria-label='like' onClick={handleLike}>{isLiked ? 'unlike' : 'like'}</button>
         </div>
         <div>{blog.user.name}</div>

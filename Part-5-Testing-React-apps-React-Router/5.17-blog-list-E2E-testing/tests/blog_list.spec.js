@@ -1,5 +1,5 @@
 import { test, expect, beforeEach, describe } from '@playwright/test';
-import { createBlog, createSampleMultipleBlogs, loginWith } from './helper';
+import { createBlog, createSampleMultipleBlogs, loginWith, loginWithWait } from './helper';
 
 describe('Blog app', () => {
     beforeEach(async ({ page, request }) => {
@@ -73,4 +73,25 @@ describe('Blog app', () => {
             await expect(blog.getByRole('button', { name: 'remove' })).not.toBeVisible()
         })
     })
+    describe('When there are multiple blogs', () => {
+        beforeEach(async ({ page, request }) => {
+            await loginWithWait(page, 'mluukkai', 'salainen')
+            await createSampleMultipleBlogs(page, request)
+        })
+
+        test('the blogs created are sorted in descending by their likes', async ({ page }) => {
+            const blogs = await page.locator('.blog').all();
+            let prevLike = Infinity;
+
+            for (const blog of blogs) {
+                await blog.getByRole('button', { name: 'view' }).click();
+                const likeElement = blog.locator('span[class=".like"]');
+                const like = await likeElement.textContent();
+                const currLike = Number(like);
+                expect(currLike).toBeLessThanOrEqual(prevLike);
+                prevLike = currLike;
+            }
+        })
+    })
+
 })

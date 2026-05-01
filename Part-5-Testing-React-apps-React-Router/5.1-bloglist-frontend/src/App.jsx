@@ -49,7 +49,10 @@ const App = () => {
       setUser(user)
       setToken(user.token)
     }
-  }, [])
+  }, [
+
+
+  ])
 
 
   const handleLogin = async(credential) => {
