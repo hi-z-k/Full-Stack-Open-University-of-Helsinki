@@ -6,7 +6,7 @@ import { login } from './services/login'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import { Routes, Route, Link, useNavigate } from 'react-router-dom'
+import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom'
 
 
 const localStorage = window.localStorage
@@ -78,6 +78,7 @@ const App = () => {
       await deleteBlog(id)
       const newBlogs = blogs.filter(b => b.id !== id)
       setAndSortBlogs(newBlogs)
+      navigateTo('/')
     }
     catch (e) {
       setErrorNotification(`Blog Deletion Failed: ${e.message}`)
@@ -89,6 +90,7 @@ const App = () => {
       const blog = await createBlog(newBlog)
       setSuccessNotification(`a new blog "${blog.title}" by ${blog.author} added`)
       setAndSortBlogs(blogs.concat(blog))
+      navigateTo('/')
     }
     catch (e) {
       console.error(e.message)
@@ -122,32 +124,45 @@ const App = () => {
   const padding = {
     padding: 5
   }
+
+  const match = useMatch('/blogs/:id')
+  const blog = match
+    ? blogs.find(blog => blog.id === match.params.id)
+    : null
   return (
     <div>
       <div>
         <Link style={padding} to="/">blog</Link>
-        {user ? <button onClick={handleLogout}>Logout</button> :
+        {user ? <>
+          <Link style={padding} to="/create">new blog</Link>
+          <button onClick={handleLogout}>Logout</button>
+        </> :
           <Link style={padding} to="/login">login</Link>}
       </div>
       <h2>blogs</h2>
       {notification && <Notification data={notification} />}
       <Routes>
+        <Route path="/blogs/:id" element={
+          blog && <Blog key={blog.id} data={{ blog, user }} onLike={onLike} onRemove={handleRemove} />
+        } />
         <Route path="/" element={
-          blogs && blogs.map(blog =>
-            <Blog key={blog.id} data={{ blog, user }} onLike={onLike} onRemove={handleRemove} />
+          blogs.map(blog =>
+            <ul>
+              <li key={blog.id}>
+                <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+              </li>
+            </ul>
           )
         } />
         <Route path="/login" element={
           !user && <LoginForm onLogin={handleLogin} />
         } />
+        <Route path="/create" element={
+          user && <Togglable buttonLabel={'create new blog'}>
+            <BlogForm onCreate={handleCreateBlog} />
+          </Togglable>
+        } />
       </Routes>
-      {user ?
-        <Togglable buttonLabel={'create new blog'}>
-          <BlogForm onCreate={handleCreateBlog} />
-        </Togglable>
-        : <>
-          <h4>Log in to application</h4>
-        </>}
     </div>
   )
 }
