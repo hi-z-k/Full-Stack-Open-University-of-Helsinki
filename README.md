@@ -26,3 +26,9 @@ Assignment Submissions for Full Stack Open course
 - **[4.1 Blog List (Project Entry)](./Part-4-Express-application-testing-user-management/4.1-blog-list/index.js)**
 - **[4.8 Blog List Tests](./Part-4-Express-application-testing-user-management/4.1-blog-list/tests/blogs.test.js)**
 - **[4.15 User Administration](./Part-4-Express-application-testing-user-management/4.1-blog-list/controllers/user.js)**
+
+### [Part 5 - Testing React apps React Router](./Part-5-Testing-React-apps-React-Router)
+- **[5.1: Bloglist Frontend](./Part-5-Testing-React-apps-React-Router/5.1-bloglist-frontend/src/App.jsx)**
+- **[5.10: Bloglist Unit Tests](./Part-5-Testing-React-apps-React-Router/5.1-bloglist-frontend/src/components/Blog.unit.test.jsx)**
+- **[5.17: Blog List E2E Testing](./Part-5-Testing-React-apps-React-Router/5.17-blog-list-E2E-testing/tests/blog_list.spec.js)**
+- **[5.24: Routed Blogs](./Part-5-Testing-React-apps-React-Router/5.24-routed-blogs/src/App.jsx)**
