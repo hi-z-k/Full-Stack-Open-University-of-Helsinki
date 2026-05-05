@@ -7,6 +7,7 @@ import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom'
+import { Container } from '@mui/material'
 
 
 const localStorage = window.localStorage
@@ -130,40 +131,42 @@ const App = () => {
     ? blogs.find(blog => blog.id === match.params.id)
     : null
   return (
-    <div>
+    <Container>
       <div>
-        <Link style={padding} to="/">blog</Link>
-        {user ? <>
-          <Link style={padding} to="/create">new blog</Link>
-          <button onClick={handleLogout}>Logout</button>
-        </> :
-          <Link style={padding} to="/login">login</Link>}
+        <div>
+          <Link style={padding} to="/">blog</Link>
+          {user ? <>
+            <Link style={padding} to="/create">new blog</Link>
+            <button onClick={handleLogout}>Logout</button>
+          </> :
+            <Link style={padding} to="/login">login</Link>}
+        </div>
+        <h2>blogs</h2>
+        {notification && <Notification data={notification} />}
+        <Routes>
+          <Route path="/blogs/:id" element={
+            blog && <Blog key={blog.id} data={{ blog, user }} onLike={onLike} onRemove={handleRemove} />
+          } />
+          <Route path="/" element={
+            blogs.map(blog =>
+              <ul>
+                <li key={blog.id}>
+                  <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                </li>
+              </ul>
+            )
+          } />
+          <Route path="/login" element={
+            !user && <LoginForm onLogin={handleLogin} />
+          } />
+          <Route path="/create" element={
+            user && <Togglable buttonLabel={'create new blog'}>
+              <BlogForm onCreate={handleCreateBlog} />
+            </Togglable>
+          } />
+        </Routes>
       </div>
-      <h2>blogs</h2>
-      {notification && <Notification data={notification} />}
-      <Routes>
-        <Route path="/blogs/:id" element={
-          blog && <Blog key={blog.id} data={{ blog, user }} onLike={onLike} onRemove={handleRemove} />
-        } />
-        <Route path="/" element={
-          blogs.map(blog =>
-            <ul>
-              <li key={blog.id}>
-                <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-              </li>
-            </ul>
-          )
-        } />
-        <Route path="/login" element={
-          !user && <LoginForm onLogin={handleLogin} />
-        } />
-        <Route path="/create" element={
-          user && <Togglable buttonLabel={'create new blog'}>
-            <BlogForm onCreate={handleCreateBlog} />
-          </Togglable>
-        } />
-      </Routes>
-    </div>
+    </Container>
   )
 }
 

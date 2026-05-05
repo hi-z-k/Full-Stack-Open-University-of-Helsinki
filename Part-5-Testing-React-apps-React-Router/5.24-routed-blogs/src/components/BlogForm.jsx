@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { TextField, Stack, Button } from '@mui/material'
 
 
 const BlogForm = ({ onCreate }) => {
@@ -15,37 +16,29 @@ const BlogForm = ({ onCreate }) => {
   }
   return <form onSubmit={handleNote}>
     <h3>Create a new Blog</h3>
-    <div>
-      <label>
-        title
-        <input
-          type="text"
-          value={title}
-          onChange={({ target }) => setTitle(target.value)}
-        />
-      </label>
-    </div>
-    <div>
-      <label>
-        author
-        <input
-          type="text"
-          value={author}
-          onChange={({ target }) => setAuthor(target.value)}
-        />
-      </label>
-    </div>
-    <div>
-      <label>
-        url
-        <input
-          type="url"
-          value={url}
-          onChange={({ target }) => setUrl(target.value)}
-        />
-      </label>
-    </div>
-    <button type="submit">Create</button>
+    <Stack spacing={2} sx={{ width:'40%' }}>
+
+      <TextField
+        label = "title"
+        value={title}
+        variant="outlined"
+        onChange={({ target }) => setTitle(target.value)}
+      />
+      <TextField
+        label = "author"
+        value={author}
+        variant="outlined"
+        onChange={({ target }) => setAuthor(target.value)}
+      />
+      <TextField
+        label = "url"
+        type="url"
+        value={url}
+        variant="outlined"
+        onChange={({ target }) => setUrl(target.value)}
+      />
+      <Button type="submit" variant='contained' style={{ marginTop: 30, width: '10%' }}>Create</Button>
+    </Stack>
   </form>
 }
 
