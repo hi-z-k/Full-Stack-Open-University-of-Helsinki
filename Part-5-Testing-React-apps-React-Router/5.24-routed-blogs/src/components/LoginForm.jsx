@@ -26,8 +26,8 @@ const LoginForm = ({ onLogin }) => {
         variant="standard"
         onChange={({ target }) => setPassword(target.value)}
       />
-      <Button type="submit" variant='contained' style={{ marginTop: 30, width: '10%' }}>Login</Button>
     </Stack>
+    <Button type="submit" variant='contained' style={{ marginTop: 30, width: 'auto' }}>Login</Button>
   </form>
 }
 

@@ -37,8 +37,8 @@ const BlogForm = ({ onCreate }) => {
         variant="outlined"
         onChange={({ target }) => setUrl(target.value)}
       />
-      <Button type="submit" variant='contained' style={{ marginTop: 30, width: '10%' }}>Create</Button>
     </Stack>
+    <Button type="submit" variant='contained' style={{ marginTop: 30, width: 'auto' }}>Create</Button>
   </form>
 }
 

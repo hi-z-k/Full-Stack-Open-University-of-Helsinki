@@ -7,7 +7,7 @@ import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom'
-import { Container } from '@mui/material'
+import { AppBar, Container, Toolbar, Button, Typography, Stack } from '@mui/material'
 
 
 const localStorage = window.localStorage
@@ -122,9 +122,6 @@ const App = () => {
     localStorage.removeItem('loginUser')
     navigateTo('/')
   }
-  const padding = {
-    padding: 5
-  }
 
   const match = useMatch('/blogs/:id')
   const blog = match
@@ -132,15 +129,20 @@ const App = () => {
     : null
   return (
     <Container>
-      <div>
-        <div>
-          <Link style={padding} to="/">blog</Link>
-          {user ? <>
-            <Link style={padding} to="/create">new blog</Link>
-            <button onClick={handleLogout}>Logout</button>
-          </> :
-            <Link style={padding} to="/login">login</Link>}
-        </div>
+      <Stack>
+        <AppBar sx={ { marginBottom: '10' } }>
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Blog App
+            </Typography>
+            <Button color="inherit" component={Link} to="/">home</Button>
+            {user ? <>
+              <Button color="inherit" component={Link} to="/create">new blog</Button>
+              <Button color="inherit" onClick={handleLogout}>Logout</Button>
+            </> :
+              <Button color="inherit" component={Link} to="/login">login</Button>}
+          </Toolbar>
+        </AppBar>
         <h2>blogs</h2>
         {notification && <Notification data={notification} />}
         <Routes>
@@ -165,7 +167,7 @@ const App = () => {
             </Togglable>
           } />
         </Routes>
-      </div>
+      </Stack>
     </Container>
   )
 }
