@@ -1,37 +1,81 @@
-import { create } from 'zustand'
-import anecdoteService from './services/anecdotes.js'
+import { getNotificationActions } from "../notificationStore"
 
+const baseUrl = 'http://localhost:3001/anecdotes'
 
-const useAnecdoteStore = create((set, get) => ({
-  anecdotes: [],
-  filter: '',
-  actions: {
-    initialize: async () => {
-      const anecdotes = await anecdoteService.getAll()
-      set(() => ({ anecdotes: anecdotes.toSorted((a, b) => b.votes - a.votes) }))
-    },
-    vote: async (id) => {
-      const anecdote = get().anecdotes.find(n => n.id === id)
-      const updatedAnecdote = await anecdoteService.updateAnecdote(id, { ...anecdote, votes: anecdote.votes + 1 })
-      return set(state => ({
-        anecdotes: state.anecdotes.map(anecdote =>
-          anecdote.id === id ? updatedAnecdote : anecdote
-        ).toSorted((a, b) => b.votes - a.votes)
-      }))
-    },
-    add: async (anecdote) => {
-      const newAnecdote = await anecdoteService.createAnecdote(anecdote)
-      return set(
-        state => ({ anecdotes: state.anecdotes.concat(newAnecdote).toSorted((a, b) => b.votes - a.votes) })
-      )
-    },
-    setFilter: query => set(() => ({ filter: query }))
-  },
-}))
-
-export const useAnecdotes = () => {
-  const anecdotes = useAnecdoteStore((state) => state.anecdotes)
-  const filter = useAnecdoteStore((state) => state.filter)
-  return anecdotes.filter(anecdote => anecdote.content.includes(filter))
+const getAll = async () => {
+    const { setSuccessNotification, setErrorNotification } = getNotificationActions()
+    
+    try {
+        const response = await fetch(baseUrl)
+        if (!response.ok) throw new Error('Failed to fetch anecdotes')
+        
+        const data = await response.json()
+        setSuccessNotification('Fetched anecdotes successfully')
+        return data
+    } catch (e) {
+        setErrorNotification(e.message)
+        return []
+    }
 }
-export const useAnecdoteActions = () => useAnecdoteStore((state) => state.actions)
+
+const getId = () => (100000 * Math.random()).toFixed(0)
+
+const anecdoteBuilder = anecdote => ({
+    content: anecdote,
+    id: getId(),
+    votes: 0
+})
+
+const createAnecdote = async (anecdote) => {
+    const { setSuccessNotification, setErrorNotification } = getNotificationActions()
+    const newAnecdote = anecdoteBuilder(anecdote)
+    
+    try {
+        const response = await fetch(baseUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newAnecdote)
+        })
+        if (!response.ok) throw new Error('Failed to add anecdote')
+        
+        setSuccessNotification(`Added anecdote: "${newAnecdote.content}" successfully`)
+        return await response.json()
+    } catch (e) {
+        setErrorNotification(e.message)
+    }
+}
+
+const updateAnecdote = async (id, anecdote) => {
+    const { setSuccessNotification, setErrorNotification } = getNotificationActions()
+    
+    try {
+        const response = await fetch(`${baseUrl}/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(anecdote)
+        })
+        if (!response.ok) throw new Error('Failed to update anecdote')
+        setSuccessNotification(`You voted for “${anecdote.content.slice(0,20)}...”`)
+        return await response.json()
+    } catch (e) {
+        setErrorNotification(e.message)
+    }
+}
+
+const deleteAnecdote = async (id) => {
+    const { setSuccessNotification, setErrorNotification } = getNotificationActions()
+    
+    try {
+        const response = await fetch(`${baseUrl}/${id}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+        })
+        if (!response.ok) throw new Error('Failed to delete anecdote')
+        setSuccessNotification(`Deleted anecdote successfully`)
+        return await response.json()
+    } catch (e) {
+        setErrorNotification(e.message)
+    }
+}
+
+export default { getAll, createAnecdote, updateAnecdote, deleteAnecdote}
