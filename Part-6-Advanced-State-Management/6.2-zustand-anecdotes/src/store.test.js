@@ -66,4 +66,15 @@ describe('using the anecdotes actions', () => {
         const isNotFiltered = anecdotes.some(a=>!a.content.includes(query))
         expect(isNotFiltered).toBe(false)
     })
+    it('when voting, the vote number for the specific anecdote increases by 1', async()=>{
+        const anecdote = mockAnecdotes[0]
+        anecdoteService.updateAnecdote.mockResolvedValue({...anecdote, votes: anecdote.votes+1})
+        const { result: { current: { vote } } } = renderHook(() => useAnecdoteActions())
+
+        await act(()=> vote(anecdote.id))
+        
+        const { result: { current: anecdotes } } = renderHook(() => useAnecdotes())
+        const updatedAnecdote = anecdotes.find(a=> a.id===anecdote.id)
+        expect(anecdote.votes + 1 === updatedAnecdote.votes).toBe(true)
+    })
 })
