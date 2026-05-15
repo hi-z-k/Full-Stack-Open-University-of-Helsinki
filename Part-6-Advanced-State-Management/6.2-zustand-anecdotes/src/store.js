@@ -42,3 +42,5 @@ export const useAnecdotes = () => {
   return anecdotes.filter(anecdote => anecdote.content.includes(filter))
 }
 export const useAnecdoteActions = () => useAnecdoteStore((state) => state.actions)
+
+export default useAnecdoteStore
