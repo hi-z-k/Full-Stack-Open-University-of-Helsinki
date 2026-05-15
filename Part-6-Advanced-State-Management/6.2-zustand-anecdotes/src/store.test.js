@@ -58,4 +58,12 @@ describe('using the anecdotes actions', () => {
         }
         expect(isDescending).toBe(true)
     })
+    it('when there is a filter, the anecdotes received are properly filtered',async()=>{
+        const { result: { current: { setFilter } } } = renderHook(() => useAnecdoteActions())
+        const query = 'manpower'
+        await act(()=> setFilter(query))
+        const { result: { current: anecdotes } } = renderHook(() => useAnecdotes())
+        const isNotFiltered = anecdotes.some(a=>!a.content.includes(query))
+        expect(isNotFiltered).toBe(false)
+    })
 })
