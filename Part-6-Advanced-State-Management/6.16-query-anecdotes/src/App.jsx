@@ -3,9 +3,9 @@ import Notification from './components/Notification'
 import { useAnecdotes } from './hooks/useAnecdotes'
 
 const App = () => {
-  const { isPending, isError, anecdotes } = useAnecdotes()
+  const { isPending, isError, anecdotes, updateAnecdote } = useAnecdotes()
   const handleVote = (anecdote) => {
-    console.log('vote')
+    updateAnecdote(anecdote)
   }
   if (isPending) {
     return <span>Loading...</span>

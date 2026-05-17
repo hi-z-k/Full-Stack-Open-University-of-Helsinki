@@ -17,11 +17,20 @@ export const useAnecdotes = () => {
             queryClient.setQueryData(['anecdotes'], anecdotes ? anecdotes.concat(anecdote): [anecdote])
         }
     })
+    const updateAnecdoteMutation = useMutation({
+        mutationFn: anecdoteService.updateAnecdote,
+        onSuccess: (anecdote) => {
+            const anecdotes = queryClient.getQueryData(['anecdotes'])
+            const updatedAnecdotes = anecdotes.map(a=> anecdote.id === a.id ? anecdote: a)
+            queryClient.setQueryData(['anecdotes'], anecdotes ? updatedAnecdotes: anecdotes)
+        }
+    })
     return {
         isPending, 
         isError, 
         anecdotes: data, 
         addAnecdote: (content) => newAnecdoteMutation.mutate({content, votes: 0}),
+        updateAnecdote: (anecdote) => updateAnecdoteMutation.mutate({...anecdote, votes: anecdote.votes+1}),
         error
     }
 }
