@@ -32,3 +32,8 @@ Assignment Submissions for Full Stack Open course
 - **[5.10: Bloglist Unit Tests](./Part-5-Testing-React-apps-React-Router/5.1-bloglist-frontend/src/components/Blog.unit.test.jsx)**
 - **[5.17: Blog List E2E Testing](./Part-5-Testing-React-apps-React-Router/5.17-blog-list-E2E-testing/tests/blog_list.spec.js)**
 - **[5.24: Routed Blogs](./Part-5-Testing-React-apps-React-Router/5.24-routed-blogs/src/App.jsx)**
+
+### [Part 6 - Advanced State Management](./Part-6-Advanced-State-Management)
+- **[6.1: unicafe zustand](./Part-6-Advanced-State-Management/6.1-unicafe-zustand/src/App.jsx)**
+- **[6.2: zustand anecdotes](./Part-6-Advanced-State-Management/6.2-zustand-anecdotes/src/App.jsx)**
+- **[6.16: query anecdotes](./Part-6-Advanced-State-Management/6.16-query-anecdotes/src/App.jsx)**
