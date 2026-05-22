@@ -33,14 +33,23 @@ export const useAnecdotes = () => {
     const addAnecdotes = async (anecdote) => {
             try {
                 const newAnecdote = await anecdoteService.createNew({...anecdote, id: Math.round(Math.random() * 10000) })
-                setAnecdotes(anecdotes.concat(newAnecdote))
+                setAnecdotes(prev => prev.concat(newAnecdote))
             } catch (error) {
-                console.error('Failed to add anecdotes:', error)
+                console.error('Failed to add anecdote:', error)
+            }
+        }
+    const deleteAnecdote = async (anecdote) => {
+            try {
+                await anecdoteService.deleteBy(anecdote)
+                setAnecdotes(anecdotes.filter(a => a.id !== anecdote.id))
+            } catch (error) {
+                console.error('Failed to delete anecdote:', error)
             }
         }
 
     return {
         anecdotes,
-        addAnecdotes
+        addAnecdotes,
+        deleteAnecdote
     }
 }

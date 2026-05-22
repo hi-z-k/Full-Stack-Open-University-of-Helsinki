@@ -23,5 +23,17 @@ const createNew = async (object) => {
   
   return await response.json()
 }
+const deleteBy = async (object) => {
+  const response = await fetch(`${baseUrl}/${object.id}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+  })
+  
+  if (!response.ok) {
+    throw new Error('Failed to delete note')
+  }
+  
+  return object
+}
 
-export default { getAll, createNew }
+export default { getAll, createNew, deleteBy }
