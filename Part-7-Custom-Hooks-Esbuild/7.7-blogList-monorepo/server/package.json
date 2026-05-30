@@ -1,0 +1,28 @@
+{
+  "name": "4.1-blog-list",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "node --test",
+    "test:only": "npm test -- --test-only",
+    "start:test": "NODE_ENV=test node --watch index.js"
+  },
+  "keywords": [],
+  "author": "Hizkeal Y.",
+  "license": "ISC",
+  "description": "blog list API service",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "lodash": "^4.17.21",
+    "mongoose": "^9.1.1"
+  },
+  "devDependencies": {
+    "supertest": "^7.2.2"
+  }
+}

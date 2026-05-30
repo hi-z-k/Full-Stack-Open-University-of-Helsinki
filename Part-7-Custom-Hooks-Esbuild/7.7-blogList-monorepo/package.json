@@ -1,0 +1,17 @@
+{
+    "name": "bloglist-monorepo",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+        "build": "npm run build --prefix client",
+        "start": "npm start --prefix server",
+        "serve": "npm run build && npm run start"
+    },
+    "dependencies": {
+        "concurrently": "^9.2.1"
+    },
+    "devDependencies": {
+        "cross-env": "^10.1.0"
+    }
+}

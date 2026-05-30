@@ -1,0 +1,24 @@
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+    "username": "hellas",
+    "name": "Arto Hellas",
+    "password": "artoSecret123"
+}
+
+
+###
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "name": "Short User",
+  "username": "ed", 
+  "password": "validpassword"
+}
+
+
+
+### 
+GET http://localhost:3003/api/users
