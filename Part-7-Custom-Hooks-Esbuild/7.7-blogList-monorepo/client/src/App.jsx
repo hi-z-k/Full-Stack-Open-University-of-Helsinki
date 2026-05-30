@@ -6,6 +6,10 @@ import { login } from './services/login'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom'
+import { AppBar, Container, Toolbar, Button, Typography, Stack } from '@mui/material'
+
+
 const localStorage = window.localStorage
 
 
@@ -13,6 +17,7 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
+  const navigateTo = useNavigate()
   const setSuccessNotification = (message) => {
     setNotification({
       'message': message,
@@ -33,18 +38,18 @@ const App = () => {
   }
 
   const setAndSortBlogs = (blogs) => {
-    blogs.sort((a,b) => b.likes-a.likes)
+    blogs.sort((a, b) => b.likes - a.likes)
     setBlogs(blogs)
   }
 
   useEffect(() => {
     getAll().then(blogs =>
-      setAndSortBlogs( blogs )
+      setAndSortBlogs(blogs)
     )
   }, [])
   useEffect(() => {
     const loggedUser = localStorage.getItem('loginUser')
-    if (loggedUser){
+    if (loggedUser) {
       const user = JSON.parse(loggedUser)
       setUser(user)
       setToken(user.token)
@@ -55,53 +60,57 @@ const App = () => {
   ])
 
 
-  const handleLogin = async(credential) => {
-    try{
+  const handleLogin = async (credential) => {
+    try {
       const user = await login(credential)
       setUser(user)
       setToken(user.token)
       localStorage.setItem('loginUser', JSON.stringify(user))
       setSuccessNotification(`${user.name} logged in successfully`)
+      navigateTo('/')
     }
-    catch(e){
+    catch (e) {
       setErrorNotification(`Login Failed: ${e.message}`)
     }
   }
 
   const handleRemove = async (id) => {
-    try{
+    try {
       await deleteBlog(id)
       const newBlogs = blogs.filter(b => b.id !== id)
       setAndSortBlogs(newBlogs)
+      navigateTo('/')
     }
-    catch(e){
+    catch (e) {
       setErrorNotification(`Blog Deletion Failed: ${e.message}`)
     }
   }
 
-  const handleCreateBlog = async(newBlog) => {
-    try{
+  const handleCreateBlog = async (newBlog) => {
+    try {
       const blog = await createBlog(newBlog)
       setSuccessNotification(`a new blog "${blog.title}" by ${blog.author} added`)
       setAndSortBlogs(blogs.concat(blog))
+      navigateTo('/')
     }
-    catch(e){
+    catch (e) {
       console.error(e.message)
       setErrorNotification(`Blog Creation Failed: ${e.message}`)
     }
   }
 
-  const onLike = async(blog, isLiked) => {
-    try {  let updatedBlog
-      if (!isLiked){
+  const onLike = async (blog, isLiked) => {
+    try {
+      let updatedBlog
+      if (!isLiked) {
         updatedBlog = await addLike(blog)
       }
-      else{
+      else {
         updatedBlog = await removeLike(blog)
       }
       setAndSortBlogs(blogs.map(b => b.id === updatedBlog.id ? updatedBlog : b))
     }
-    catch(e){
+    catch (e) {
       setErrorNotification(`Blog Liking Failed: ${e.message}`)
     }
   }
@@ -111,30 +120,55 @@ const App = () => {
     setUser(null)
     setToken(null)
     localStorage.removeItem('loginUser')
+    navigateTo('/')
   }
+
+  const match = useMatch('/blogs/:id')
+  const blog = match
+    ? blogs.find(blog => blog.id === match.params.id)
+    : null
   return (
-    <div>
-      <h2>blogs</h2>
-      {notification && <Notification data={notification}/>}
-      {user ? <>
-        <h4>
-          {user.name}
-          <button onClick={handleLogout}>
-            Logout
-          </button>
-        </h4>
-        <Togglable buttonLabel={'create new blog'}>
-          <BlogForm onCreate={handleCreateBlog} />
-        </Togglable>
-        {blogs.map(blog =>
-          <Blog key={blog.id} data={{ blog,user }} onLike={onLike} onRemove={handleRemove}/>
-        )}
-      </>
-        :<>
-          <h4>Log in to application</h4>
-          {!user && <LoginForm onLogin={handleLogin}/>}
-        </>}
-    </div>
+    <Container>
+      <Stack>
+        <AppBar sx={ { marginBottom: '10' } }>
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Blog App
+            </Typography>
+            <Button color="inherit" component={Link} to="/">home</Button>
+            {user ? <>
+              <Button color="inherit" component={Link} to="/create">new blog</Button>
+              <Button color="inherit" onClick={handleLogout}>Logout</Button>
+            </> :
+              <Button color="inherit" component={Link} to="/login">login</Button>}
+          </Toolbar>
+        </AppBar>
+        <h2>blogs</h2>
+        {notification && <Notification data={notification} />}
+        <Routes>
+          <Route path="/blogs/:id" element={
+            blog && <Blog key={blog.id} data={{ blog, user }} onLike={onLike} onRemove={handleRemove} />
+          } />
+          <Route path="/" element={
+            blogs.map(blog =>
+              <ul>
+                <li key={blog.id}>
+                  <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                </li>
+              </ul>
+            )
+          } />
+          <Route path="/login" element={
+            !user && <LoginForm onLogin={handleLogin} />
+          } />
+          <Route path="/create" element={
+            user && <Togglable buttonLabel={'create new blog'}>
+              <BlogForm onCreate={handleCreateBlog} />
+            </Togglable>
+          } />
+        </Routes>
+      </Stack>
+    </Container>
   )
 }
 
