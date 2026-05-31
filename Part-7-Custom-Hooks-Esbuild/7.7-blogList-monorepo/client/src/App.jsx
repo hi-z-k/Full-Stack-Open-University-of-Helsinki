@@ -8,6 +8,7 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom'
 import { AppBar, Container, Toolbar, Button, Typography, Stack } from '@mui/material'
+import ErrorBoundary from './components/ErrorBoundary'
 
 
 const localStorage = window.localStorage
@@ -130,10 +131,10 @@ const App = () => {
   return (
     <Container>
       <Stack>
-        <AppBar sx={ { marginBottom: '10' } }>
+        <AppBar sx={{ marginBottom: '10' }}>
           <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Blog App
+                Blog App
             </Typography>
             <Button color="inherit" component={Link} to="/">home</Button>
             {user ? <>
@@ -145,28 +146,30 @@ const App = () => {
         </AppBar>
         <h2>blogs</h2>
         {notification && <Notification data={notification} />}
-        <Routes>
-          <Route path="/blogs/:id" element={
-            blog && <Blog key={blog.id} data={{ blog, user }} onLike={onLike} onRemove={handleRemove} />
-          } />
-          <Route path="/" element={
-            blogs.map(blog =>
-              <ul>
-                <li key={blog.id}>
-                  <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-                </li>
-              </ul>
-            )
-          } />
-          <Route path="/login" element={
-            !user && <LoginForm onLogin={handleLogin} />
-          } />
-          <Route path="/create" element={
-            user && <Togglable buttonLabel={'create new blog'}>
-              <BlogForm onCreate={handleCreateBlog} />
-            </Togglable>
-          } />
-        </Routes>
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/blogs/:id" element={
+              blog && <Blog key={blog.id} data={{ blog, user }} onLike={onLike} onRemove={handleRemove} />
+            } />
+            <Route path="/" element={
+              blogs.map(blog =>
+                <ul>
+                  <li key={blog.id}>
+                    <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                  </li>
+                </ul>
+              )
+            } />
+            <Route path="/login" element={
+              !user && <LoginForm onLogin={handleLogin} />
+            } />
+            <Route path="/create" element={
+              user && <Togglable buttonLabel={'create new blog'}>
+                <BlogForm onCreate={handleCreateBlog} />
+              </Togglable>
+            } />
+          </Routes>
+        </ErrorBoundary>
       </Stack>
     </Container>
   )
