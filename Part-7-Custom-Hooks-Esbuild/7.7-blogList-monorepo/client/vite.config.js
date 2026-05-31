@@ -9,16 +9,16 @@ export default defineConfig({
     globals: true,
     setupFiles: './testSetup.js',
   },
-  build:{
+  build: {
     outDir: '../server/build',
-    emptyOutDir: true
+    emptyOutDir: true,
   },
   server: {
     proxy: {
       '/api': {
         target: 'http://localhost:3003',
-        changeOrigin: true
-      }
-    }
-  }
+        changeOrigin: true,
+      },
+    },
+  },
 })

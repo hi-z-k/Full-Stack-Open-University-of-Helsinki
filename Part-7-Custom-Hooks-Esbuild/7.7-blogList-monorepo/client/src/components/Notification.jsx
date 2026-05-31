@@ -1,8 +1,8 @@
-import  '../index.css'
+import '../index.css'
 import { Alert } from '@mui/material'
 
 const Notification = ({ data }) => {
-  const { message,type } = data
+  const { message, type } = data
   if (!message) {
     return null
   }

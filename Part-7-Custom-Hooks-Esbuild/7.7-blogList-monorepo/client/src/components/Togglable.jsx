@@ -14,11 +14,25 @@ const Togglable = ({ buttonLabel, children }) => {
   return (
     <div>
       <div style={hideWhenVisible}>
-        <Button type="submit" onClick={toggleVisibility} variant='contained' style={{ marginTop: 30, width: 'auto' }}>{buttonLabel}</Button>
+        <Button
+          type="submit"
+          onClick={toggleVisibility}
+          variant="contained"
+          style={{ marginTop: 30, width: 'auto' }}
+        >
+          {buttonLabel}
+        </Button>
       </div>
       <div style={showWhenVisible}>
         {children}
-        <Button type="submit" onClick={toggleVisibility} variant='outlined' style={{ marginTop: 10, width: 'auto' }}>cancel</Button>
+        <Button
+          type="submit"
+          onClick={toggleVisibility}
+          variant="outlined"
+          style={{ marginTop: 10, width: 'auto' }}
+        >
+          cancel
+        </Button>
       </div>
     </div>
   )

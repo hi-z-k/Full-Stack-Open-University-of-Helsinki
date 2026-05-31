@@ -1,18 +1,30 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
-import { getAll, setToken, createBlog, addLike, removeLike, deleteBlog } from './services/blogs'
+import {
+  getAll,
+  setToken,
+  createBlog,
+  addLike,
+  removeLike,
+  deleteBlog,
+} from './services/blogs'
 import LoginForm from './components/LoginForm'
 import { login } from './services/login'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom'
-import { AppBar, Container, Toolbar, Button, Typography, Stack } from '@mui/material'
+import {
+  AppBar,
+  Container,
+  Toolbar,
+  Button,
+  Typography,
+  Stack,
+} from '@mui/material'
 import ErrorBoundary from './components/ErrorBoundary'
 
-
 const localStorage = window.localStorage
-
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -21,8 +33,8 @@ const App = () => {
   const navigateTo = useNavigate()
   const setSuccessNotification = (message) => {
     setNotification({
-      'message': message,
-      'type': 'success'
+      message: message,
+      type: 'success',
     })
     setTimeout(() => {
       setNotification(null)
@@ -30,8 +42,8 @@ const App = () => {
   }
   const setErrorNotification = (message) => {
     setNotification({
-      'message': message,
-      'type': 'error'
+      message: message,
+      type: 'error',
     })
     setTimeout(() => {
       setNotification(null)
@@ -44,9 +56,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    getAll().then(blogs =>
-      setAndSortBlogs(blogs)
-    )
+    getAll().then((blogs) => setAndSortBlogs(blogs))
   }, [])
   useEffect(() => {
     const loggedUser = localStorage.getItem('loginUser')
@@ -55,11 +65,7 @@ const App = () => {
       setUser(user)
       setToken(user.token)
     }
-  }, [
-
-
-  ])
-
+  }, [])
 
   const handleLogin = async (credential) => {
     try {
@@ -69,8 +75,7 @@ const App = () => {
       localStorage.setItem('loginUser', JSON.stringify(user))
       setSuccessNotification(`${user.name} logged in successfully`)
       navigateTo('/')
-    }
-    catch (e) {
+    } catch (e) {
       setErrorNotification(`Login Failed: ${e.message}`)
     }
   }
@@ -78,11 +83,10 @@ const App = () => {
   const handleRemove = async (id) => {
     try {
       await deleteBlog(id)
-      const newBlogs = blogs.filter(b => b.id !== id)
+      const newBlogs = blogs.filter((b) => b.id !== id)
       setAndSortBlogs(newBlogs)
       navigateTo('/')
-    }
-    catch (e) {
+    } catch (e) {
       setErrorNotification(`Blog Deletion Failed: ${e.message}`)
     }
   }
@@ -90,11 +94,12 @@ const App = () => {
   const handleCreateBlog = async (newBlog) => {
     try {
       const blog = await createBlog(newBlog)
-      setSuccessNotification(`a new blog "${blog.title}" by ${blog.author} added`)
+      setSuccessNotification(
+        `a new blog "${blog.title}" by ${blog.author} added`
+      )
       setAndSortBlogs(blogs.concat(blog))
       navigateTo('/')
-    }
-    catch (e) {
+    } catch (e) {
       console.error(e.message)
       setErrorNotification(`Blog Creation Failed: ${e.message}`)
     }
@@ -105,13 +110,13 @@ const App = () => {
       let updatedBlog
       if (!isLiked) {
         updatedBlog = await addLike(blog)
-      }
-      else {
+      } else {
         updatedBlog = await removeLike(blog)
       }
-      setAndSortBlogs(blogs.map(b => b.id === updatedBlog.id ? updatedBlog : b))
-    }
-    catch (e) {
+      setAndSortBlogs(
+        blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b))
+      )
+    } catch (e) {
       setErrorNotification(`Blog Liking Failed: ${e.message}`)
     }
   }
@@ -125,54 +130,76 @@ const App = () => {
   }
 
   const match = useMatch('/blogs/:id')
-  const blog = match
-    ? blogs.find(blog => blog.id === match.params.id)
-    : null
+  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null
   return (
     <Container>
       <Stack>
         <AppBar sx={{ marginBottom: '10' }}>
           <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                Blog App
+              Blog App
             </Typography>
-            <Button color="inherit" component={Link} to="/">home</Button>
-            {user ? <>
-              <Button color="inherit" component={Link} to="/create">new blog</Button>
-              <Button color="inherit" onClick={handleLogout}>Logout</Button>
-            </> :
-              <Button color="inherit" component={Link} to="/login">login</Button>}
+            <Button color="inherit" component={Link} to="/">
+              home
+            </Button>
+            {user ? (
+              <>
+                <Button color="inherit" component={Link} to="/create">
+                  new blog
+                </Button>
+                <Button color="inherit" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Button color="inherit" component={Link} to="/login">
+                login
+              </Button>
+            )}
           </Toolbar>
         </AppBar>
         <h2>blogs</h2>
         {notification && <Notification data={notification} />}
         <ErrorBoundary>
           <Routes>
-            <Route path="/blogs/:id" element={
-              blog && <Blog key={blog.id} data={{ blog, user }} onLike={onLike} onRemove={handleRemove} />
-            } />
-            <Route path="/" element={
-              blogs.map(blog =>
+            <Route
+              path="/blogs/:id"
+              element={
+                blog && (
+                  <Blog
+                    key={blog.id}
+                    data={{ blog, user }}
+                    onLike={onLike}
+                    onRemove={handleRemove}
+                  />
+                )
+              }
+            />
+            <Route
+              path="/"
+              element={blogs.map((blog) => (
                 <ul>
                   <li key={blog.id}>
                     <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
                   </li>
                 </ul>
-              )
-            } />
-            <Route path="/login" element={
-              !user && <LoginForm onLogin={handleLogin} />
-            } />
-            <Route path="/create" element={
-              user && <Togglable buttonLabel={'create new blog'}>
-                <BlogForm onCreate={handleCreateBlog} />
-              </Togglable>
-            } />
-            <Route path="*" element={
-              <h1>
-                404 - Page not found
-              </h1>
-            } />
+              ))}
+            />
+            <Route
+              path="/login"
+              element={!user && <LoginForm onLogin={handleLogin} />}
+            />
+            <Route
+              path="/create"
+              element={
+                user && (
+                  <Togglable buttonLabel={'create new blog'}>
+                    <BlogForm onCreate={handleCreateBlog} />
+                  </Togglable>
+                )
+              }
+            />
+            <Route path="*" element={<h1>404 - Page not found</h1>} />
           </Routes>
         </ErrorBoundary>
       </Stack>

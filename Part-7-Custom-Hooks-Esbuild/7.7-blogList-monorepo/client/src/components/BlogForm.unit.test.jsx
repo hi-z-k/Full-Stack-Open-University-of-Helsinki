@@ -4,21 +4,21 @@ import { test } from 'vitest'
 import BlogForm from './BlogForm'
 
 const blog = {
-  'title': 'Brave New World',
-  'author': 'Aldous Huxley',
-  'url': 'https://www.huxley.net/bnw/one.html',
-  'likes': 6213,
-  'user': {
-    'name': 'Lucrezia Borgia',
-    'username': 'lborgia',
-    'id': '1'
+  title: 'Brave New World',
+  author: 'Aldous Huxley',
+  url: 'https://www.huxley.net/bnw/one.html',
+  likes: 6213,
+  user: {
+    name: 'Lucrezia Borgia',
+    username: 'lborgia',
+    id: '1',
   },
-  'id': '2'
+  id: '2',
 }
 
-test('Blog form should send the correct data collected from the user',async() => {
+test('Blog form should send the correct data collected from the user', async () => {
   const mockHandleCreate = vi.fn()
-  render(<BlogForm onCreate={mockHandleCreate}/>)
+  render(<BlogForm onCreate={mockHandleCreate} />)
 
   const user = userEvent.setup()
 
