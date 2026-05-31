@@ -168,6 +168,11 @@ const App = () => {
                 <BlogForm onCreate={handleCreateBlog} />
               </Togglable>
             } />
+            <Route path="*" element={
+              <h1>
+                404 - Page not found
+              </h1>
+            } />
           </Routes>
         </ErrorBoundary>
       </Stack>
