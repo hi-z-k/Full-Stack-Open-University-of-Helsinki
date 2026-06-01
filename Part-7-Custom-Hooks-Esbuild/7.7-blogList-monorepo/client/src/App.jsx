@@ -12,6 +12,7 @@ import LoginForm from './components/LoginForm'
 import { login } from './services/login'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import { notificationActions } from './store/notification'
 import Togglable from './components/Togglable'
 import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom'
 import {
@@ -29,26 +30,7 @@ const localStorage = window.localStorage
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState(null)
   const navigateTo = useNavigate()
-  const setSuccessNotification = (message) => {
-    setNotification({
-      message: message,
-      type: 'success',
-    })
-    setTimeout(() => {
-      setNotification(null)
-    }, 5000)
-  }
-  const setErrorNotification = (message) => {
-    setNotification({
-      message: message,
-      type: 'error',
-    })
-    setTimeout(() => {
-      setNotification(null)
-    }, 5000)
-  }
 
   const setAndSortBlogs = (blogs) => {
     blogs.sort((a, b) => b.likes - a.likes)
@@ -73,35 +55,37 @@ const App = () => {
       setUser(user)
       setToken(user.token)
       localStorage.setItem('loginUser', JSON.stringify(user))
-      setSuccessNotification(`${user.name} logged in successfully`)
+      notificationActions.success(`${user.name} logged in successfully`)
       navigateTo('/')
     } catch (e) {
-      setErrorNotification(`Login Failed: ${e.message}`)
+      notificationActions.error(`Login Failed: ${e.message}`)
     }
   }
 
   const handleRemove = async (id) => {
     try {
+      const deletedBlog = blogs.find((b) => b.id === id)
       await deleteBlog(id)
       const newBlogs = blogs.filter((b) => b.id !== id)
       setAndSortBlogs(newBlogs)
       navigateTo('/')
+      notificationActions.success(`"${deletedBlog.title}" by ${deletedBlog.author} deleted`)
     } catch (e) {
-      setErrorNotification(`Blog Deletion Failed: ${e.message}`)
+      notificationActions.error(`Blog Deletion Failed: ${e.message}`)
     }
   }
 
   const handleCreateBlog = async (newBlog) => {
     try {
       const blog = await createBlog(newBlog)
-      setSuccessNotification(
+      notificationActions.success(
         `a new blog "${blog.title}" by ${blog.author} added`
       )
       setAndSortBlogs(blogs.concat(blog))
       navigateTo('/')
     } catch (e) {
       console.error(e.message)
-      setErrorNotification(`Blog Creation Failed: ${e.message}`)
+      notificationActions.error(`Blog Creation Failed: ${e.message}`)
     }
   }
 
@@ -117,12 +101,12 @@ const App = () => {
         blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b))
       )
     } catch (e) {
-      setErrorNotification(`Blog Liking Failed: ${e.message}`)
+      notificationActions.error(`Blog Liking Failed: ${e.message}`)
     }
   }
 
   const handleLogout = () => {
-    setSuccessNotification(`"${user.name}" has logged off`)
+    notificationActions.success(`"${user.name}" has logged off`)
     setUser(null)
     setToken(null)
     localStorage.removeItem('loginUser')
@@ -159,7 +143,7 @@ const App = () => {
           </Toolbar>
         </AppBar>
         <h2>blogs</h2>
-        {notification && <Notification data={notification} />}
+         <Notification />
         <ErrorBoundary>
           <Routes>
             <Route
