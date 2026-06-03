@@ -1,6 +1,9 @@
-import { Button } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import { useState } from 'react'
 import styled from 'styled-components'
+import useBlogs, { blogActions } from '../store/blogs'
+import { notificationActions } from '../store/notification'
+import { useMatch, useNavigate } from 'react-router-dom'
 
 const Card = styled.div`
   border: 2px solid;
@@ -33,20 +36,48 @@ const CardCreator = styled.div`
   padding-left: 0rem;
 `
 
-const Blog = ({ data, onLike, onRemove }) => {
-  const { user, blog } = data
+const Blog = ({ user }) => {
+  const navigateTo = useNavigate()
+  const match = useMatch('/blogs/:id')
   const [isLiked, setIsLiked] = useState(false)
-  const handleLike = () => {
-    onLike(blog, isLiked)
+  const { blogs, loading } = useBlogs()
+
+  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null
+  if (loading) {
+    return <Typography>Loading blog...</Typography>
+  }
+
+  if (!blog) {
+    return <Typography>The Blog doesn't exist</Typography>
+  }
+  const handleLike = async() => {
+    try {
+      if (!isLiked) {
+        await blogActions.addLike(blog)
+      } else {
+        await blogActions.removeLike(blog)
+      }
+    } catch (e) {
+      notificationActions.error(`Blog Liking Failed: ${e.message}`)
+    }
     setIsLiked(!isLiked)
   }
-  const handleRemove = () => {
+
+  const handleRemove = async () => {
     if (window.confirm(`Remove ${blog.title} by ${blog.author}`)) {
-      onRemove(blog.id)
+      try {
+        const deletedBlog = blogs.find((b) => b.id === blog.id)
+        await blogActions.deleteBlog(blog.id)
+        notificationActions.success(`"${deletedBlog.title}" by ${deletedBlog.author} deleted`)
+        navigateTo('/')
+      } catch (e) {
+        notificationActions.error(`Blog Deletion Failed: ${e.message}`)
+      }
     }
   }
 
-  const isSameUser = user && user.username === blog.user.username
+
+  const isSameUser = user && blog.user && user.username === blog.user.username
   return (
     <Card className="blog">
       <CardTitle>{blog.title}</CardTitle>

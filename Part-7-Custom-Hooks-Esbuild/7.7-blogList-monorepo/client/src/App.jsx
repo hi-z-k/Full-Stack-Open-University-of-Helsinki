@@ -1,20 +1,13 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
-import {
-  getAll,
-  setToken,
-  createBlog,
-  addLike,
-  removeLike,
-  deleteBlog,
-} from './services/blogs'
+import {setToken} from './services/blogs'
 import LoginForm from './components/LoginForm'
 import { login } from './services/login'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import { notificationActions } from './store/notification'
 import Togglable from './components/Togglable'
-import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom'
+import { Routes, Route, Link, useNavigate } from 'react-router-dom'
 import {
   AppBar,
   Container,
@@ -24,22 +17,16 @@ import {
   Stack,
 } from '@mui/material'
 import ErrorBoundary from './components/ErrorBoundary'
+import BlogList from './components/BlogList'
+import { blogActions } from './store/blogs'
 
 const localStorage = window.localStorage
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const navigateTo = useNavigate()
 
-  const setAndSortBlogs = (blogs) => {
-    blogs.sort((a, b) => b.likes - a.likes)
-    setBlogs(blogs)
-  }
 
-  useEffect(() => {
-    getAll().then((blogs) => setAndSortBlogs(blogs))
-  }, [])
   useEffect(() => {
     const loggedUser = localStorage.getItem('loginUser')
     if (loggedUser) {
@@ -47,6 +34,8 @@ const App = () => {
       setUser(user)
       setToken(user.token)
     }
+    blogActions.getAll()
+
   }, [])
 
   const handleLogin = async (credential) => {
@@ -62,48 +51,6 @@ const App = () => {
     }
   }
 
-  const handleRemove = async (id) => {
-    try {
-      const deletedBlog = blogs.find((b) => b.id === id)
-      await deleteBlog(id)
-      const newBlogs = blogs.filter((b) => b.id !== id)
-      setAndSortBlogs(newBlogs)
-      navigateTo('/')
-      notificationActions.success(`"${deletedBlog.title}" by ${deletedBlog.author} deleted`)
-    } catch (e) {
-      notificationActions.error(`Blog Deletion Failed: ${e.message}`)
-    }
-  }
-
-  const handleCreateBlog = async (newBlog) => {
-    try {
-      const blog = await createBlog(newBlog)
-      notificationActions.success(
-        `a new blog "${blog.title}" by ${blog.author} added`
-      )
-      setAndSortBlogs(blogs.concat(blog))
-      navigateTo('/')
-    } catch (e) {
-      console.error(e.message)
-      notificationActions.error(`Blog Creation Failed: ${e.message}`)
-    }
-  }
-
-  const onLike = async (blog, isLiked) => {
-    try {
-      let updatedBlog
-      if (!isLiked) {
-        updatedBlog = await addLike(blog)
-      } else {
-        updatedBlog = await removeLike(blog)
-      }
-      setAndSortBlogs(
-        blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b))
-      )
-    } catch (e) {
-      notificationActions.error(`Blog Liking Failed: ${e.message}`)
-    }
-  }
 
   const handleLogout = () => {
     notificationActions.success(`"${user.name}" has logged off`)
@@ -113,8 +60,6 @@ const App = () => {
     navigateTo('/')
   }
 
-  const match = useMatch('/blogs/:id')
-  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null
   return (
     <Container>
       <Stack>
@@ -149,25 +94,14 @@ const App = () => {
             <Route
               path="/blogs/:id"
               element={
-                blog && (
                   <Blog
-                    key={blog.id}
-                    data={{ blog, user }}
-                    onLike={onLike}
-                    onRemove={handleRemove}
+                    user={user}
                   />
-                )
               }
             />
             <Route
               path="/"
-              element={blogs.map((blog) => (
-                <ul>
-                  <li key={blog.id}>
-                    <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-                  </li>
-                </ul>
-              ))}
+              element={<BlogList />}
             />
             <Route
               path="/login"
@@ -178,7 +112,7 @@ const App = () => {
               element={
                 user && (
                   <Togglable buttonLabel={'create new blog'}>
-                    <BlogForm onCreate={handleCreateBlog} />
+                    <BlogForm />
                   </Togglable>
                 )
               }
