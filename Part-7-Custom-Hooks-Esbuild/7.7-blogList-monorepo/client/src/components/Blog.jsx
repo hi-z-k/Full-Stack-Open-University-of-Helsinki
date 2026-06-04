@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import useBlogs, { blogActions } from '../store/blogs'
 import { notificationActions } from '../store/notification'
 import { useMatch, useNavigate } from 'react-router-dom'
+import { useUser } from '../store/user'
 
 const Card = styled.div`
   border: 2px solid;
@@ -36,7 +37,8 @@ const CardCreator = styled.div`
   padding-left: 0rem;
 `
 
-const Blog = ({ user }) => {
+const Blog = () => {
+  const {user} = useUser()
   const navigateTo = useNavigate()
   const match = useMatch('/blogs/:id')
   const [isLiked, setIsLiked] = useState(false)

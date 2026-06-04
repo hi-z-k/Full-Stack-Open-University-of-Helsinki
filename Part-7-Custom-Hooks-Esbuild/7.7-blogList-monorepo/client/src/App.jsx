@@ -1,8 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import Blog from './components/Blog'
-import {setToken} from './services/blogs'
 import LoginForm from './components/LoginForm'
-import { login } from './services/login'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import { notificationActions } from './store/notification'
@@ -19,31 +17,22 @@ import {
 import ErrorBoundary from './components/ErrorBoundary'
 import BlogList from './components/BlogList'
 import { blogActions } from './store/blogs'
+import { userActions, useUser } from './store/user'
 
-const localStorage = window.localStorage
 
 const App = () => {
-  const [user, setUser] = useState(null)
   const navigateTo = useNavigate()
-
+  const { user } = useUser()
 
   useEffect(() => {
-    const loggedUser = localStorage.getItem('loginUser')
-    if (loggedUser) {
-      const user = JSON.parse(loggedUser)
-      setUser(user)
-      setToken(user.token)
-    }
+    userActions.fetchUser()
     blogActions.getAll()
 
   }, [])
 
   const handleLogin = async (credential) => {
     try {
-      const user = await login(credential)
-      setUser(user)
-      setToken(user.token)
-      localStorage.setItem('loginUser', JSON.stringify(user))
+      const user = await userActions.login(credential)
       notificationActions.success(`${user.name} logged in successfully`)
       navigateTo('/')
     } catch (e) {
@@ -54,9 +43,7 @@ const App = () => {
 
   const handleLogout = () => {
     notificationActions.success(`"${user.name}" has logged off`)
-    setUser(null)
-    setToken(null)
-    localStorage.removeItem('loginUser')
+    userActions.logout()
     navigateTo('/')
   }
 
@@ -88,15 +75,13 @@ const App = () => {
           </Toolbar>
         </AppBar>
         <h2>blogs</h2>
-         <Notification />
+        <Notification />
         <ErrorBoundary>
           <Routes>
             <Route
               path="/blogs/:id"
               element={
-                  <Blog
-                    user={user}
-                  />
+                <Blog />
               }
             />
             <Route
