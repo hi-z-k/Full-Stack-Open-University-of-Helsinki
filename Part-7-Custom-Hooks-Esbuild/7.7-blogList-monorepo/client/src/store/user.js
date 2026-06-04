@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 import { setToken } from '../services/blogs'
 import * as loginSerivce from '../services/login'
+import userStorage from '../services/persistentUser'
 
-const localStorage = window.localStorage
 
 
 const useUserStore = create(() => ({
@@ -21,11 +21,10 @@ const setUser = (user) => {
 }
 
 const fetchUser = () => {
-    const loggedUser = localStorage.getItem('loginUser')
+    const loggedUser = userStorage.getUser()
     if (loggedUser) {
-        const user = JSON.parse(loggedUser)
-        setUser(user)
-        setToken(user.token)
+        setUser(loggedUser)
+        setToken(loggedUser.token)
     }
 }
 
@@ -33,7 +32,7 @@ const login = async (credential) => {
     const user = await loginSerivce.login(credential)
     setUser(user)
     setToken(user.token)
-    localStorage.setItem('loginUser', JSON.stringify(user))
+    userStorage.setUser(user)
     return user
 }
 
@@ -41,7 +40,7 @@ const login = async (credential) => {
 const logout = () => {
     clearUser()
     setToken(null)
-    localStorage.removeItem('loginUser')
+    userStorage.clearUser()
 }
 
 

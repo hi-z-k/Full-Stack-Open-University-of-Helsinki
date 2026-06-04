@@ -1,13 +1,13 @@
-import { useState } from 'react'
 import { TextField, Stack, Button } from '@mui/material'
 import { blogActions } from '../store/blogs'
 import { notificationActions } from '../store/notification'
 import { useNavigate } from 'react-router-dom'
+import useField from '../hooks/useField'
 
 const BlogForm = () => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const title = useField()
+  const author = useField()
+  const url = useField()
   const navigateTo = useNavigate()
 
   const handleCreateBlog = async (newBlog) => {
@@ -24,10 +24,7 @@ const BlogForm = () => {
   }
   const handleNote = (e) => {
     e.preventDefault()
-    handleCreateBlog({ title, author, url })
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+    handleCreateBlog({ title: title.value, author: author.value, url: url.value })
   }
   return (
     <form onSubmit={handleNote}>
@@ -35,22 +32,15 @@ const BlogForm = () => {
       <Stack spacing={2} sx={{ width: '40%' }}>
         <TextField
           label="title"
-          value={title}
-          variant="outlined"
-          onChange={({ target }) => setTitle(target.value)}
+          {...title}
         />
         <TextField
           label="author"
-          value={author}
-          variant="outlined"
-          onChange={({ target }) => setAuthor(target.value)}
+         {...author}
         />
         <TextField
           label="url"
-          type="url"
-          value={url}
-          variant="outlined"
-          onChange={({ target }) => setUrl(target.value)}
+          {...url}
         />
       </Stack>
       <Button
