@@ -24,7 +24,7 @@ const BlogForm = () => {
   }
   const handleNote = (e) => {
     e.preventDefault()
-    handleCreateBlog({ title: title.value, author: author.value, url: url.value })
+    handleCreateBlog({ title: title.props.value, author: author.props.value, url: url.props.value })
   }
   return (
     <form onSubmit={handleNote}>
@@ -32,15 +32,15 @@ const BlogForm = () => {
       <Stack spacing={2} sx={{ width: '40%' }}>
         <TextField
           label="title"
-          {...title}
+          {...title.props}
         />
         <TextField
           label="author"
-         {...author}
+         {...author.props}
         />
         <TextField
           label="url"
-          {...url}
+          {...url.props}
         />
       </Stack>
       <Button

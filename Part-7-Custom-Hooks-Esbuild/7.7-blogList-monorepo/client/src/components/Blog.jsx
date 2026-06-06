@@ -1,10 +1,11 @@
-import { Button, Typography } from '@mui/material'
+import { Box, Button, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
 import styled from 'styled-components'
 import useBlogs, { blogActions } from '../store/blogs'
 import { notificationActions } from '../store/notification'
 import { useMatch, useNavigate } from 'react-router-dom'
 import { useUser } from '../store/user'
+import CommentForm from './CommentForm'
 
 const Card = styled.div`
   border: 2px solid;
@@ -38,7 +39,7 @@ const CardCreator = styled.div`
 `
 
 const Blog = () => {
-  const {user} = useUser()
+  const { user } = useUser()
   const navigateTo = useNavigate()
   const match = useMatch('/blogs/:id')
   const [isLiked, setIsLiked] = useState(false)
@@ -52,7 +53,7 @@ const Blog = () => {
   if (!blog) {
     return <Typography>The Blog doesn't exist</Typography>
   }
-  const handleLike = async() => {
+  const handleLike = async () => {
     try {
       if (!isLiked) {
         await blogActions.addLike(blog)
@@ -108,6 +109,13 @@ const Blog = () => {
           remove
         </Button>
       )}
+      <>
+        <h1>Comments</h1>
+        <CommentForm id={blog.id}/>
+        <ul>
+          {blog.comments.map(b => <li key={b.id}>{b.content}</li>)}
+        </ul>
+      </>
     </Card>
   )
 }

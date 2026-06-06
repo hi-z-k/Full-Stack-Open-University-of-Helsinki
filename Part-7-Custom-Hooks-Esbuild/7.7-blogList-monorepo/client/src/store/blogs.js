@@ -43,6 +43,17 @@ const createBlog = (newBlog) => {
         (blog) => useBlogsStore.getState().blogs.concat(blog)
     )
 }
+const addComment = async (id, newComment) => {
+    try {
+        const comment = await blogService.addComment(id, newComment)
+        
+        useBlogsStore.setState((state) => ({
+            blogs: state.blogs.map(blog => blog.id === id ? { ...blog, comments: blog.comments.concat(comment) } : blog)
+        }))
+    } catch (error) {
+        useBlogsStore.setState({ error: error.message })
+    }
+}
 
 const deleteBlog = (id) => {
     _requester(
@@ -58,6 +69,7 @@ export const blogActions = {
     getAll,
     createBlog,
     deleteBlog,
+    addComment,
     addLike,
     removeLike
 }

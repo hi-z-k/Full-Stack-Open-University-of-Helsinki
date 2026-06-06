@@ -14,6 +14,14 @@ const createBlog = async (blog) => {
   return response.data
 }
 
+const addComment = async (id,comment) => {
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  }
+  const response = await axios.post(`${url}/${id}/comments`, comment, config)
+  return response.data
+}
+
 const getAll = async () => {
   const response = await axios.get(url)
   return response.data
@@ -41,4 +49,4 @@ const deleteBlog = async (id) => {
   return response.data
 }
 
-export { getAll, setToken, createBlog, addLike, removeLike, deleteBlog }
+export { getAll, setToken, createBlog, addLike, removeLike, deleteBlog, addComment }
