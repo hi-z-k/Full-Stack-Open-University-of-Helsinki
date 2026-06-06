@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from '@mui/material'
+import { Box, Button, Card, CardContent, Divider, List, ListItem, ListItemText, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
 import styled from 'styled-components'
 import useBlogs, { blogActions } from '../store/blogs'
@@ -7,11 +7,10 @@ import { useMatch, useNavigate } from 'react-router-dom'
 import { useUser } from '../store/user'
 import CommentForm from './CommentForm'
 
-const Card = styled.div`
-  border: 2px solid;
-  border-style: ridge;
+const CardNew = styled(Card)`
+  border: 2px ridge;
   border-radius: 0.5em;
-  padding: 0rem 0rem 2rem 1.5em;
+  padding: 0 0 2rem 1.5em;
 `
 const CardTitle = styled.p`
   font-size: 2em;
@@ -82,7 +81,7 @@ const Blog = () => {
 
   const isSameUser = user && blog.user && user.username === blog.user.username
   return (
-    <Card className="blog">
+    <CardNew className="blog">
       <CardTitle>{blog.title}</CardTitle>
       <CardAuthor>by {blog.author}</CardAuthor>
       <CardURL href={blog.url}>{blog.url}</CardURL>
@@ -111,12 +110,24 @@ const Blog = () => {
       )}
       <>
         <h1>Comments</h1>
-        <CommentForm id={blog.id}/>
-        <ul>
-          {blog.comments.map(b => <li key={b.id}>{b.content}</li>)}
-        </ul>
+        <CommentForm id={blog.id} />
+        {blog.comments.length > 0 && (
+          <Card variant="outlined" sx={{ maxWidth: 600, ml:0 , mt:1 }}>
+            <List disablePadding>
+              {blog.comments.map((c) => (
+                <ListItem key={c.id} divider sx={{ px: 2 }}>
+                  <ListItemText
+                    primary={c.content}
+                    primaryTypographyProps={{ variant: 'caption', color: 'text.secondary' }}
+                    secondaryTypographyProps={{ variant: 'body2', color: 'text.primary', fontWeight: 'bold' }}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Card>
+        )}
       </>
-    </Card>
+    </CardNew>
   )
 }
 
