@@ -37,3 +37,7 @@ Assignment Submissions for Full Stack Open course
 - **[6.1: unicafe zustand](./Part-6-Advanced-State-Management/6.1-unicafe-zustand/src/App.jsx)**
 - **[6.2: zustand anecdotes](./Part-6-Advanced-State-Management/6.2-zustand-anecdotes/src/App.jsx)**
 - **[6.16: query anecdotes](./Part-6-Advanced-State-Management/6.16-query-anecdotes/src/App.jsx)**
+
+### [Part 7 - Custom Hooks & Esbuild](./Part-7-Custom-Hooks-Esbuild/)
+- **[7.1: Routed Anecdotes](./Part-7-Custom-Hooks-Esbuild/7.1-routed-anecdotes/src/App.jsx)**
+- **[7.7: Blog List Monorepo](./Part-7-Custom-Hooks-Esbuild/7.7-blogList-monorepo/client/src/App.jsx)**
