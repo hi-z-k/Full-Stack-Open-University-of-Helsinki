@@ -19,6 +19,12 @@ const userSchema = Schema({
             type: Schema.Types.ObjectId,
             ref: 'Blog'
         }
+    ],
+    comments: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Comment'
+        }
     ]
 })
 

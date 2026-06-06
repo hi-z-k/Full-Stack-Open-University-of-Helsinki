@@ -2,6 +2,7 @@ import { Router } from 'express'
 import Blog from '../models/blog.js'
 import User from '../models/user.js'
 import { userFetcher } from '../utils/middleware.js'
+import Comment from '../models/comment.js'
 const blogRouter = Router()
 
 
@@ -10,6 +11,7 @@ blogRouter.get('/', async (request, response, next) => {
     const blogs = await Blog
     .find({})
     .populate("user", {name: 1, username: 1})
+    .populate("comments", "-user")
     response.json(blogs)
   }
   catch(e){
@@ -35,6 +37,35 @@ blogRouter.post('/', userFetcher, async (request, response, next) => {
     user.blogs = user.blogs.concat(blogResponse._id)
     await user.save()
     response.status(201).json(blogResponse)
+  }
+  catch(e){
+    next(e)
+  }
+})
+blogRouter.post('/:id/comments', userFetcher, async (request, response, next) => {
+  const user = request.user
+  const id = request.params.id
+  try{
+    const { content } = request.body
+    if (!content){
+      return response.status(400).json({error: "bad request"})
+    }
+    const blog = await Blog.findById(id)
+    
+    if (!blog) {
+      return response.status(404).json({ error: "Blog not found" })
+    }
+    const comment = new Comment({
+      content,
+      user: user._id
+    })
+    const commentResponse = await comment.save()
+    blog.comments = blog.comments.concat(commentResponse._id)
+    await blog.save()
+
+    user.comments = user.comments.concat(commentResponse._id)
+    await user.save()
+    response.status(201).json(commentResponse)
   }
   catch(e){
     next(e)
@@ -68,7 +99,7 @@ blogRouter.put('/update/:id', userFetcher, async (request, response, next)=>{
       return response.status(404).json({ error: 'blog not found' })
     }
     if (blog.user.toString() !== user._id.toString()) {
-      return response.status(403).json({ error: 'only the creator can delete this blog' })
+      return response.status(403).json({ error: 'only the creator can update this blog' })
     }
     const newBlog = {title, author, url}
     const updatedBlog = await Blog.findByIdAndUpdate(
