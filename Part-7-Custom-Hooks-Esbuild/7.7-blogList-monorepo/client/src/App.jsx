@@ -20,6 +20,7 @@ import { blogActions } from './store/blogs'
 import { userActions, useUser } from './store/user'
 import UsersList from './components/UsersList'
 import { usersActions } from './store/users'
+import User from './components/User'
 
 
 const App = () => {
@@ -88,6 +89,12 @@ const App = () => {
               path="/blogs/:id"
               element={
                 <Blog />
+              }
+            />
+            <Route
+              path="/users/:id"
+              element={
+                <User />
               }
             />
             <Route
