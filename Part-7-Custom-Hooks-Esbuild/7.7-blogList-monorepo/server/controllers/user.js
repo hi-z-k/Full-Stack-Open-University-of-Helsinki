@@ -10,6 +10,7 @@ userRouter.get("/", async(request, response, next)=>{
         try { 
         const users = await User
         .find({})
+        .select('-passwordHash')
         .populate("blogs", {user: 0, likes: 0})
         response.status(200).json(users)
     }

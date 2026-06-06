@@ -18,6 +18,8 @@ import ErrorBoundary from './components/ErrorBoundary'
 import BlogList from './components/BlogList'
 import { blogActions } from './store/blogs'
 import { userActions, useUser } from './store/user'
+import UsersList from './components/UsersList'
+import { usersActions } from './store/users'
 
 
 const App = () => {
@@ -26,6 +28,7 @@ const App = () => {
 
   useEffect(() => {
     userActions.fetchUser()
+    usersActions.getAllUsers()
     blogActions.getAll()
 
   }, [])
@@ -58,6 +61,9 @@ const App = () => {
             <Button color="inherit" component={Link} to="/">
               home
             </Button>
+            <Button color="inherit" component={Link} to="/users">
+              users
+            </Button>
             {user ? (
               <>
                 <Button color="inherit" component={Link} to="/create">
@@ -87,6 +93,10 @@ const App = () => {
             <Route
               path="/"
               element={<BlogList />}
+            />
+            <Route
+              path="/users"
+              element={<UsersList />}
             />
             <Route
               path="/login"
